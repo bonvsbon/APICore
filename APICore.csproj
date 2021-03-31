@@ -13,6 +13,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.1.1" />
     <PackageReference Include="System.Data.OleDb" Version="5.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    <Reference Include="AESEncrypt">
+      <HintPath>bin\Debug\netcoreapp3.1\AESEncrypt.dll</HintPath>
+    </Reference>
+ 
   </ItemGroup>
 
 
