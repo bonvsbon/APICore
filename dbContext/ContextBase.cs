@@ -42,8 +42,7 @@ namespace APICore.dbContext
         }
 
         public ContextBase(string ConString) : this(ConString, ConString.ToUpper().IndexOf(".MDB") > 1 || ConString.ToUpper().IndexOf(".XLS") > 1 || ConString.ToUpper().IndexOf(".CSV") > 1 ? DBType.OleDb : DBType.SqlServer)
-        {
-            
+        {     
             _SqlDb = new SqlConnection(AESEncrypt.AESOperation.DecryptString(ConString));
         }
         public string BaseConnectionString()
@@ -155,7 +154,6 @@ namespace APICore.dbContext
                 cons = AESEncrypt.AESOperation.DecryptString(option.Value.ConnectionStrings._prod);
                 _dal._SqlDb = new SqlConnection(cons);
                 dt = new DataTable();
-                responseModel = new ResponseModel();
                 _func = new Functional();
             }
             public DataTable ExecuteDataTable(Statement sql)

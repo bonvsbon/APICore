@@ -8,14 +8,7 @@
       "TRACE",
       "DEBUG",
       "NETCOREAPP",
-      "NETCOREAPP3_1",
-      "NETCOREAPP1_0_OR_GREATER",
-      "NETCOREAPP1_1_OR_GREATER",
-      "NETCOREAPP2_0_OR_GREATER",
-      "NETCOREAPP2_1_OR_GREATER",
-      "NETCOREAPP2_2_OR_GREATER",
-      "NETCOREAPP3_0_OR_GREATER",
-      "NETCOREAPP3_1_OR_GREATER"
+      "NETCOREAPP3_1"
     ],
     "languageVersion": "8.0",
     "platform": "",
@@ -43,13 +36,10 @@
           "Swashbuckle.AspNetCore.SwaggerUI": "6.1.1",
           "System.Data.OleDb": "5.0.0",
           "System.Data.SqlClient": "4.8.2",
-<<<<<<< HEAD
           "System.DirectoryServices": "5.0.0",
           "System.IdentityModel.Tokens.Jwt": "5.6.0",
           "System.Net.Http": "4.3.4",
-=======
           "AESEncrypt": "1.0.0.0",
->>>>>>> 8173befde08f3440e6a79435fe09bf1435df0d2a
           "Microsoft.AspNetCore.Antiforgery": "3.1.0.0",
           "Microsoft.AspNetCore.Authentication.Abstractions": "3.1.0.0",
           "Microsoft.AspNetCore.Authentication.Cookies": "3.1.0.0",
