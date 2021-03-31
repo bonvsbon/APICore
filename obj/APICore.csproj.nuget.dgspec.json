@@ -1,33 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Work\\API\\APICore\\APICore.csproj": {}
+    "D:\\API\\APICore\\APICore.csproj": {}
   },
   "projects": {
-    "D:\\Work\\API\\APICore\\APICore.csproj": {
+    "D:\\API\\APICore\\APICore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Work\\API\\APICore\\APICore.csproj",
+        "projectUniqueName": "D:\\API\\APICore\\APICore.csproj",
         "projectName": "APICore",
-        "projectPath": "D:\\Work\\API\\APICore\\APICore.csproj",
-        "packagesPath": "C:\\Users\\sittichai.s\\.nuget\\packages\\",
-        "outputPath": "D:\\Work\\API\\APICore\\obj\\",
+        "projectPath": "D:\\API\\APICore\\APICore.csproj",
+        "packagesPath": "C:\\Users\\anukul.s\\.nuget\\packages\\",
+        "outputPath": "D:\\API\\APICore\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\sittichai.s\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\anukul.s\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
             "projectReferences": {}
           }
         },
@@ -39,6 +38,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "dependencies": {
             "IdentityManager": {
               "target": "Package",
@@ -119,7 +119,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
         }
       }
     }
