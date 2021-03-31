@@ -55,6 +55,20 @@ D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Annotations.d
 D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Swagger.dll
 D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
 D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
+<<<<<<< HEAD
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\IdentityManager.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Logging.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Tokens.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Microsoft.Owin.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Microsoft.Owin.Security.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Owin.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\System.DirectoryServices.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\System.IdentityModel.Tokens.Jwt.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\System.IO.FileSystem.AccessControl.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.DirectoryServices.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.IO.FileSystem.AccessControl.dll
+=======
 D:\API\APICore\bin\Debug\netcoreapp3.1\appsettings.Development.json
 D:\API\APICore\bin\Debug\netcoreapp3.1\appsettings.json
 D:\API\APICore\bin\Debug\netcoreapp3.1\APICore.exe
@@ -112,3 +126,4 @@ D:\API\APICore\obj\Debug\netcoreapp3.1\APICore.csproj.CopyComplete
 D:\API\APICore\obj\Debug\netcoreapp3.1\APICore.dll
 D:\API\APICore\obj\Debug\netcoreapp3.1\APICore.pdb
 D:\API\APICore\obj\Debug\netcoreapp3.1\APICore.genruntimeconfig.cache
+>>>>>>> 8173befde08f3440e6a79435fe09bf1435df0d2a

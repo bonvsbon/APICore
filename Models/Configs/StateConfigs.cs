@@ -18,6 +18,9 @@ namespace APICore.Models
             public ConnectionString ConnectionStrings { get; set; }
             public Storages StoragePath { get; set; }
             public FTP FtpConfig { get; set; }
+            public Ldaps Ldap { get; set; }
+            
+            
         }
         public class ConnectionString
         {
@@ -36,6 +39,12 @@ namespace APICore.Models
             public string _username { get; set; }
             public string _password { get; set; }
             public string _ftpPath { get; set; }
+        }
+        public class Ldaps {
+            public string _server { get; set; }
+            
+            public string _shortDomainName { get; set; }
+            
         }
     }
 }

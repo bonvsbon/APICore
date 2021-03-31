@@ -15,6 +15,13 @@ namespace APICore.Models
     }
     #endregion Contract
 
+    #region Authentication
+    public class RequestAuthorizeModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+    #endregion
 
     #region FileManagement
     public class RequestFileModel
