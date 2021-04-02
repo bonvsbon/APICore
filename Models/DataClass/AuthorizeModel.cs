@@ -11,6 +11,7 @@ using System.Text;
 using APICore.dbContext;
 using static APICore.Models.appSetting;
 using Microsoft.Extensions.Options;
+using APICore.Common;
 
 namespace APICore.Models
 {
@@ -81,7 +82,7 @@ namespace APICore.Models
 
                 response.EmployeeCode = de.Properties["employeeID"].Value != null ? de.Properties["employeeID"].Value.ToString() : "";
                 response.EmployeeName = username;
-                // response.Token = TokenGenerator.GenerateToken(username);
+                response.Token = TokenGenerator.GenerateToken(username);
                 response.Username = username;
                 return JsonConvert.SerializeObject(response);
                 //return "OK";

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Work\\API\\APICore\\APICore.csproj": {}
+    "d:\\Work\\API\\APICore\\APICore.csproj": {}
   },
   "projects": {
-    "D:\\Work\\API\\APICore\\APICore.csproj": {
+    "d:\\Work\\API\\APICore\\APICore.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Work\\API\\APICore\\APICore.csproj",
+        "projectUniqueName": "d:\\Work\\API\\APICore\\APICore.csproj",
         "projectName": "APICore",
-        "projectPath": "D:\\Work\\API\\APICore\\APICore.csproj",
+        "projectPath": "d:\\Work\\API\\APICore\\APICore.csproj",
         "packagesPath": "C:\\Users\\sittichai.s\\.nuget\\packages\\",
-        "outputPath": "D:\\Work\\API\\APICore\\obj\\",
+        "outputPath": "d:\\Work\\API\\APICore\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
