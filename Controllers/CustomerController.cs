@@ -26,13 +26,13 @@ namespace APICore.Controllers
         [HttpPost]
         public string index([FromBody] RequestModel request)
         {
-            return func.JsonSerialize(customer.REST_CustomerInformationbyNationID(request._data.Id));
+            return func.JsonSerialize(customer.REST_CustomerInformationbyNationID(request.data.Id));
         }
 
         [HttpPost]
         public string installmentTable([FromBody] RequestModel request)
         {
-            return func.JsonSerialize(customer.REST_InstallmentTable(request._data.AgreementNo));
+            return func.JsonSerialize(customer.REST_InstallmentTable(request.data.AgreementNo));
         }
 
     }

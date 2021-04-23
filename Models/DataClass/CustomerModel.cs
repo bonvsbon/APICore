@@ -20,14 +20,14 @@ public class CustomerModel : ContextBase
             statement = new Statement();
         }
 
-        public DataTable REST_CustomerInformation(string agreementNo)
+        public ResponseModel REST_CustomerInformation(string agreementNo)
         {
             statement.AppendStatement("EXEC REST_CustomerInformation @AgreementNo");
             statement.AppendParameter("@AgreementNo", agreementNo);
 
             return resAccess.ExecuteDataTable(statement);
         }
-        public DataTable REST_CustomerInformationbyNationID(string idcard)
+        public ResponseModel REST_CustomerInformationbyNationID(string idcard)
         {
             statement.AppendStatement("EXEC REST_CustomerInformationbyNationID @IDCard");
             statement.AppendParameter("@IDCard", idcard);
@@ -35,7 +35,7 @@ public class CustomerModel : ContextBase
             return resAccess.ExecuteDataTable(statement);
         }
 
-        public DataTable REST_InstallmentTable(string agreementNo)
+        public ResponseModel REST_InstallmentTable(string agreementNo)
         {
             statement.AppendStatement("EXEC REST_InstallmentTable @AgreementNo");
             statement.AppendParameter("@AgreementNo", agreementNo);

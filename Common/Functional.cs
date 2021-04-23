@@ -50,6 +50,7 @@ namespace APICore.Common
                 if (file != null && !string.IsNullOrEmpty(file))
                 {
                     this.result = true;
+                    return this.result;
                 }
             }
             this.result = false;
@@ -61,6 +62,7 @@ namespace APICore.Common
             if (Directory.Exists(path))
             {
                 this.result = true;
+                return this.result;
             }
             this.result = false;
             return this.result;
@@ -99,7 +101,6 @@ namespace APICore.Common
         {
             return new FileInfo(filename);
         }
-
 
         #endregion
 

@@ -49,11 +49,11 @@ namespace APICore.dbContext
         {
             if (bool.Parse(_state.ConnectionStrings.isProd))
             {
-                return _state.ConnectionStrings._prod;
+                return _state.ConnectionStrings.prod;
             }
             else
             { 
-                return _state.ConnectionStrings._dev;
+                return _state.ConnectionStrings.dev;
             }
         }
         public ContextBase(string connectionString, DBType databaseType)
@@ -147,16 +147,16 @@ namespace APICore.dbContext
             public ResponseModel responseModel;
             public Functional _func;
 
-            public ResultAccess(IOptions<StateConfigs> option) : base(option.Value.ConnectionStrings._prod)
+            public ResultAccess(IOptions<StateConfigs> option) : base(option.Value.ConnectionStrings.prod)
             {
                 string cons = "";
                 _dal = new ContextBase(option);
-                cons = AESEncrypt.AESOperation.DecryptString(option.Value.ConnectionStrings._prod);
+                cons = AESEncrypt.AESOperation.DecryptString(option.Value.ConnectionStrings.prod);
                 _dal._SqlDb = new SqlConnection(cons);
                 dt = new DataTable();
                 _func = new Functional();
             }
-            public DataTable ExecuteDataTable(Statement sql)
+            public ResponseModel ExecuteDataTable(Statement sql)
             {
                 ResponseModel resultSet = new ResponseModel();
                 try
@@ -174,33 +174,40 @@ namespace APICore.dbContext
                 }
                 finally
                 {
-                    resultSet = _func.SerializeObject(dt, StatusHttp.OK, "");
-                }
-
-                return dt;
-            }
-            public ResponseModel ExecutenonResult(Statement sql)
-            {
-                ResponseModel resultSet = new ResponseModel();
-                try
-                {
-                    _dal._SqlDb.Open();
-                    _command = new SqlCommand(sql.GetStatement(), _dal._SqlDb);
-                    AddParameter(sql);
-                    _adapter = new SqlDataAdapter(_command);
-                    _adapter.Fill(dt);
-                    _dal._SqlDb.Close();
-                }
-                catch (Exception e)
-                {
-                    resultSet = _func.SerializeObject(dt, StatusHttp.InternalError, e.Message);
-                }
-                finally
-                {
-                    resultSet = _func.SerializeObject(dt, StatusHttp.OK, "");
+                    if(dt.Rows.Count > 0)
+                    {
+                        resultSet = _func.SerializeObject(dt, StatusHttp.OK, "");
+                    }
+                    else
+                    {
+                        resultSet = _func.SerializeObject(dt, StatusHttp.NotFound, "");
+                    }
                 }
 
                 return resultSet;
+            }
+            public string ExecutenonResult(Statement sql)
+            {
+                string result = "";
+                ResponseModel resultSet = new ResponseModel();
+                try
+                {
+                    _dal._SqlDb.Open();
+                    _command = new SqlCommand(sql.GetStatement(), _dal._SqlDb);
+                    AddParameter(sql);
+                    _command.ExecuteNonQuery();
+                    _dal._SqlDb.Close();
+                }
+                catch (Exception e)
+                {
+                    return e.Message;
+                }
+                finally
+                {
+                    result = StatusHttp.OK.ToString();
+                }
+
+                return result;
             }
 
             public object GetSingleValue(Statement sql)

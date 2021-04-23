@@ -2,7 +2,7 @@ using System.Data;
 using APICore.dbContext;
 using Microsoft.Extensions.Options;
 using static APICore.Models.appSetting;
-
+using APICore.Common;
 
 namespace APICore.Models
 {
@@ -23,14 +23,21 @@ namespace APICore.Models
         }
 
 
-        public string REST_InsertFilelog(string FileName, string OriginalFile, long fileSize, string PhoneNumber, string CallDate, string CallTime, string CreateBy)
+        public string REST_InsertFilelog(string FileName, string OriginalFile, long FileSize, string Extension,string PhoneNumber, string CallDate, string CallTime, string CreateBy)
         {
-            _statement.AppendStatement("EXEC REST_InsertFilelog ");
-            _statement.AppendParameter("@Test", 0);
+            _statement.AppendStatement("EXEC REST_InsertFilelog @FileName, @OriginalFile, @FileSize, @Extension, @PhoneNumber, @CallDate, @CallTime, @CreateBy");
+            _statement.AppendParameter("@FileName", FileName.hasOrNull());
+            _statement.AppendParameter("@OriginalFile", OriginalFile.hasOrNull());
+            _statement.AppendParameter("@FileSize", FileSize.hasOrNull());
+            _statement.AppendParameter("@Extension", Extension.hasOrNull());
+            _statement.AppendParameter("@PhoneNumber", PhoneNumber.hasOrNull());
+            _statement.AppendParameter("@CallDate", CallDate.hasOrNull());
+            _statement.AppendParameter("@CallTime", CallTime.hasOrNull());
+            _statement.AppendParameter("@CreateBy", CreateBy.hasOrNull());
 
-            _resAccess.ExecutenonResult(_statement);
+            string result = _resAccess.ExecutenonResult(_statement);
 
-            return "Success";
+            return result;
         }
     }
 }

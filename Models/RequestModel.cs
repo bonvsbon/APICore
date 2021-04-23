@@ -3,9 +3,9 @@ namespace APICore.Models
     #region Contract
     public class RequestModel
     {
-        public string _token { get; set; }
-        public RequestDataModel _data { get; set; }
-        public string _sendfrom { get; set; }
+        public string token { get; set; }
+        public RequestDataModel data { get; set; }
+        public string sendfrom { get; set; }
     }
     public class RequestDataModel
     {
@@ -26,9 +26,9 @@ namespace APICore.Models
     #region FileManagement
     public class RequestFileModel
     {
-        public string _token { get; set; }
-        public string _sendfrom { get; set; }
-        public string _files { get; set; }
+        public string token { get; set; }
+        public string sendfrom { get; set; }
+        public string files { get; set; }
     }
     #endregion
 }
