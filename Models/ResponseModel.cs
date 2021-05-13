@@ -86,7 +86,6 @@ namespace APICore.Models
         }
         #endregion
 
-        
         #region "ResponsePurchaseHistory"
         public class ResponsePurchaseHistory
         {
@@ -95,7 +94,7 @@ namespace APICore.Models
             public List<CustomerModel.PurchaseHistory> _data { get; set; }
             public string _statusCode { get; set; }
 
-             public static ResponsePurchaseHistory SerializeObject(DataTable _data, Functional.StatusHttp _statusCode, string _errorMessage)
+            public static ResponsePurchaseHistory SerializeObject(DataTable _data, Functional.StatusHttp _statusCode, string _errorMessage)
             {
                 _response._data = CustomerModel.PurchaseHistory.ConvertDataTable(_data);
                 _response._statusCode = func.GetStateHttp(_statusCode);
