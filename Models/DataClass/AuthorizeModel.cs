@@ -71,9 +71,9 @@ namespace APICore.Models {
 
                 response.EmployeeCode = de.Properties["employeeID"].Value != null ? de.Properties["employeeID"].Value.ToString () : "";
                 response.EmployeeName = username;
-                response.Token = TokenGenerator.GenerateToken (username);
+                response.Token = TokenGenerator.GenerateToken(username);
                 response.Username = username;
-                return JsonConvert.SerializeObject (response);
+                return JsonConvert.SerializeObject(response);
                 //return "OK";
             } else {
                 strErrMsg = "Password In correct";

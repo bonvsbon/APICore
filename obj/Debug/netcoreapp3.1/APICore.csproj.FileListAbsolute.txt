@@ -127,3 +127,5 @@ D:\API\APICore\obj\Debug\netcoreapp3.1\APICore.dll
 D:\API\APICore\obj\Debug\netcoreapp3.1\APICore.pdb
 D:\API\APICore\obj\Debug\netcoreapp3.1\APICore.genruntimeconfig.cache
 >>>>>>> 8173befde08f3440e6a79435fe09bf1435df0d2a
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\APICore.xml
+D:\Work\API\APICore\obj\Debug\netcoreapp3.1\APICore.xml

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,8 @@ namespace APICore.Common {
 				Subject = new ClaimsIdentity (new Claim[] {
 						new Claim (ClaimTypes.NameIdentifier, userId.ToString ()),
 					}),
-					Expires = DateTime.UtcNow.AddMinutes(5),
+					// Expires = DateTime.UtcNow.AddMinutes(5),
+					Expires = DateTime.UtcNow.AddDays(3),
 					Issuer = myIssuer, 
 					Audience = myAudience,
 					SigningCredentials = new SigningCredentials(mySecurityKey, SecurityAlgorithms.HmacSha256Signature)
@@ -35,7 +37,7 @@ namespace APICore.Common {
 			var token = tokenHandler.CreateToken(tokenDescriptor);
 			return tokenHandler.WriteToken(token);
 		}
-		public string ValidateJwtToken(string token) {
+		public static string ValidateJwtToken(string token) {
 			var mySecret = "asdv234234^&%&^%&^hjsdfb2%%%";
 			var tokenHandler = new JwtSecurityTokenHandler();
 			var key = Encoding.ASCII.GetBytes(mySecret);

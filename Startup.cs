@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +15,8 @@ using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using static APICore.Models.appSetting;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using APICore.Models;
+using APICore.Common;
+using APICore.dbContext;
 
 namespace APICore
 {
@@ -32,22 +35,19 @@ namespace APICore
                 .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
-            // Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
 
             services.Configure<StateConfigs>(Configuration.GetSection("StateConfigs"));
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.ConfigureSwagger();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -58,11 +58,16 @@ namespace APICore
             app.UseHttpsRedirection();
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("../swagger/v1/swagger.json", "My API V1"); });
-
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("v1/swagger.json", "MyAPI V1");
+            });
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<JwtMiddleware>();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

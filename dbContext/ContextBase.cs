@@ -156,9 +156,8 @@ namespace APICore.dbContext
                 dt = new DataTable();
                 _func = new Functional();
             }
-            public ResponseModel ExecuteDataTable(Statement sql)
+            public DataTable ExecuteDataTable(Statement sql)
             {
-                ResponseModel resultSet = new ResponseModel();
                 try
                 {
                     _dal._SqlDb.Open();
@@ -170,21 +169,21 @@ namespace APICore.dbContext
                 }
                 catch (Exception e)
                 {
-                    resultSet = _func.SerializeObject(dt, StatusHttp.InternalError, e.Message);
+                    //_func.SerializeObject(dt, Functional.StatusHttp.InternalError, e.Message);
                 }
                 finally
                 {
                     if(dt.Rows.Count > 0)
                     {
-                        resultSet = _func.SerializeObject(dt, StatusHttp.OK, "");
+                        //_func.SerializeObject(dt, Functional.StatusHttp.OK, "");
                     }
                     else
                     {
-                        resultSet = _func.SerializeObject(dt, StatusHttp.NotFound, "");
+                        //_func.SerializeObject(dt, Functional.StatusHttp.NotFound, "");
                     }
                 }
 
-                return resultSet;
+                return dt;
             }
             public string ExecutenonResult(Statement sql)
             {
@@ -204,7 +203,7 @@ namespace APICore.dbContext
                 }
                 finally
                 {
-                    result = StatusHttp.OK.ToString();
+                    result = Functional.StatusHttp.OK.ToString();
                 }
 
                 return result;

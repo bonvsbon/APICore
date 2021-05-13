@@ -7,37 +7,74 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using static APICore.Models.ResponseModel;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace APICore.Common
 {
     public class Functional
     {
-        private ResponseModel _response;
         private bool result = false;
-        public Functional()
-        {
-            _response = new ResponseModel();
-        }
 
         public string JsonSerialize(object obj)
         {
-            return JsonConvert.SerializeObject(obj);
+            return JsonConvert.SerializeObject(obj, Formatting.Indented);
         }
 
         public void JsonDeserialize<T>(T obj, string json)
         {
             obj = JsonConvert.DeserializeObject<T>(json);
         }
-
-        public ResponseModel SerializeObject(DataTable _data, StatusHttp _statusCode, string _errorMessage)
+        public T JsonDeserialize<T>(string json)
         {
-            _response._data = _data;
-            _response._statusCode = _response.GetStateHttp(_statusCode);
-            _response._errorMessage = _errorMessage;
-
-            return _response;
+            return JsonConvert.DeserializeObject<T>(json);
         }
 
+        public string GetStateHttp(StatusHttp code)
+        {
+            string resultCode = "";
+            switch (code)
+            {
+                case StatusHttp.Created:
+                    resultCode = "201";
+                    break;
+                case StatusHttp.Accepted:
+                    resultCode = "202";
+                    break;
+                case StatusHttp.InvalidToken:
+                    resultCode = "400";
+                    break;
+                case StatusHttp.SecurityError:
+                    resultCode = "401";
+                    break;
+                case StatusHttp.NotFound:
+                    resultCode = "404";
+                    break;
+                case StatusHttp.InternalError:
+                    resultCode = "500";
+                    break;
+                default:
+                    resultCode = "200";
+                    break;
+            }
+
+            return resultCode;
+        }
+
+        public enum StatusHttp
+        {
+            OK,
+            Created,
+            Accepted,
+            NotFound,
+            InternalError,
+            InvalidToken,
+            SecurityError
+        }
+        public void SetResponseHeader(HttpContext context, string key = "Content-Type", string value = "application/json")
+        {
+            context.Response.Headers.Add(key, value);
+        }
 
         #region Directory & File
         public bool CheckExistingFile(string path, string filename)
@@ -101,7 +138,6 @@ namespace APICore.Common
         {
             return new FileInfo(filename);
         }
-
         #endregion
 
     }

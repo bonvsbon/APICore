@@ -1,5 +1,6 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ using System.Text;
 using APICore.Models;
 using static APICore.Models.appSetting;
 using Microsoft.Extensions.Options;
+using APICore.Common;
 
 namespace APICore.Controllers
 {
@@ -18,15 +20,23 @@ namespace APICore.Controllers
     [Route("api/[controller]")]
     public class AuthorizeController : ControllerBase
     {
+        Functional func;
         AuthorizeModel auth;
-        public AuthorizeController(IOptions<StateConfigs> configs)
+        private readonly HttpContext Context;
+        public AuthorizeController(IHttpContextAccessor contextAccessor, IOptions<StateConfigs> configs)
         {
+            func = new Functional();
+            Context = contextAccessor.HttpContext;
             auth = new AuthorizeModel(configs);
         }
         [HttpPost]
-        public string PostLogin(RequestAuthorizeModel request)
+        public UserInformationModel PostLogin(RequestAuthorizeModel request)
         {
-            return auth.Authentication(request.Username, request.Password);
+            string result = auth.Authentication(request.Username, request.Password);
+
+            func.SetResponseHeader(Context);
+
+            return func.JsonDeserialize<UserInformationModel>(result);
         }
     }
 }
