@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Net.Cache;
 using Microsoft.AspNetCore.Mvc;
@@ -10,38 +11,89 @@ using Microsoft.AspNetCore.Http;
 namespace APICore.Controllers {
     [ApiController]
     [Route ("api/[controller]/[action]")]
+    [Produces("application/json")]
     public class CustomerController : ControllerBase {
         StateConfigs state = new StateConfigs();
         Functional func;
         RequestDataModel reqModel;
         CustomerModel customer;
-        private readonly HttpContext Context;
-        public CustomerController(IHttpContextAccessor contextAccessor, IOptions<StateConfigs> config) {
+        public CustomerController(IOptions<StateConfigs> config) {
             func = new Functional();
             customer = new CustomerModel(config);
             reqModel = new RequestDataModel();
-            Context = contextAccessor.HttpContext;
         }
 
         // [Authorize]
         [HttpPost]
-        public ResponseModel.ResponseCustomerInformationbyNationID index([FromBody] RequestModel request) {
-            func.SetResponseHeader(Context);
-            return customer.REST_CustomerInformationbyNationID(request.data.Id);
+        public IActionResult index([FromBody] RequestModel request) {
+            ResponseModel result = new ResponseModel();
+            try
+            {
+                result._data = customer.REST_CustomerInformationbyNationID(request.data.Id);
+                result._errorMessage = "";
+                if(result._data.Rows.Count == 0)
+                {
+                    result._statusCode = result.GetStateHttp(ResponseModel.StatusHttp.NotFound);
+                    return NotFound(result);
+                }
+                result._statusCode = result.GetStateHttp(ResponseModel.StatusHttp.OK);
+                return Ok(result);
+            } 
+            catch (Exception e)
+            {
+                result._statusCode = result.GetStateHttp(ResponseModel.StatusHttp.InternalError);
+                result._errorMessage = e.Message;
+                return BadRequest(result);
+            }
+
         }
 
         // [Authorize]
         [HttpPost]
-        public ResponseModel.ResponsePurchaseHistory purchaseHistory([FromBody] RequestModel request) {
-            func.SetResponseHeader(Context);
-            return customer.REST_PurchaseHistory(request.data.Id);
+        public IActionResult purchaseHistory([FromBody] RequestModel request) {
+            ResponseModel result = new ResponseModel();
+            try
+            {
+                result._data = customer.REST_PurchaseHistory(request.data.Id);
+                result._errorMessage = "";
+                if(result._data.Rows.Count == 0)
+                {
+                    result._statusCode = result.GetStateHttp(ResponseModel.StatusHttp.NotFound);
+                    return NotFound(result);
+                }
+                result._statusCode = result.GetStateHttp(ResponseModel.StatusHttp.OK);
+                return Ok(result);
+            } 
+            catch (Exception e)
+            {
+                result._statusCode = result.GetStateHttp(ResponseModel.StatusHttp.InternalError);
+                result._errorMessage = e.Message;
+                return BadRequest(result);
+            }
         }
 
         // [Authorize]
         [HttpPost]
-        public ResponseModel.ResponseInstallmentTable installmentTable([FromBody] RequestModel request) {
-            func.SetResponseHeader(Context);
-            return customer.REST_InstallmentTable(request.data.AgreementNo);
+        public IActionResult installmentTable([FromBody] RequestModel request) {
+            ResponseModel result = new ResponseModel();
+            try
+            {
+                result._data = customer.REST_InstallmentTable(request.data.AgreementNo);
+                result._errorMessage = "";
+                if(result._data.Rows.Count == 0)
+                {
+                    result._statusCode = result.GetStateHttp(ResponseModel.StatusHttp.NotFound);
+                    return NotFound(result);
+                }
+                result._statusCode = result.GetStateHttp(ResponseModel.StatusHttp.OK);
+                return Ok(result);
+            } 
+            catch (Exception e)
+            {
+                result._statusCode = result.GetStateHttp(ResponseModel.StatusHttp.InternalError);
+                result._errorMessage = e.Message;
+                return BadRequest(result);
+            }
         }
 
     }

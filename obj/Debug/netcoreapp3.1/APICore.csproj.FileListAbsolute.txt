@@ -129,3 +129,6 @@ D:\API\APICore\obj\Debug\netcoreapp3.1\APICore.genruntimeconfig.cache
 >>>>>>> 8173befde08f3440e6a79435fe09bf1435df0d2a
 D:\Work\API\APICore\bin\Debug\netcoreapp3.1\APICore.xml
 D:\Work\API\APICore\obj\Debug\netcoreapp3.1\APICore.xml
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.JsonPatch.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+D:\Work\API\APICore\bin\Debug\netcoreapp3.1\Newtonsoft.Json.Bson.dll

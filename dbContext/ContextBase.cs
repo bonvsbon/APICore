@@ -169,17 +169,17 @@ namespace APICore.dbContext
                 }
                 catch (Exception e)
                 {
-                    //_func.SerializeObject(dt, Functional.StatusHttp.InternalError, e.Message);
+                    _func.SerializeObject(dt, StatusHttp.InternalError, e.Message);
                 }
                 finally
                 {
                     if(dt.Rows.Count > 0)
                     {
-                        //_func.SerializeObject(dt, Functional.StatusHttp.OK, "");
+                        _func.SerializeObject(dt, StatusHttp.OK, "");
                     }
                     else
                     {
-                        //_func.SerializeObject(dt, Functional.StatusHttp.NotFound, "");
+                        _func.SerializeObject(dt, StatusHttp.NotFound, "");
                     }
                 }
 
@@ -203,7 +203,7 @@ namespace APICore.dbContext
                 }
                 finally
                 {
-                    result = Functional.StatusHttp.OK.ToString();
+                    result = StatusHttp.OK.ToString();
                 }
 
                 return result;

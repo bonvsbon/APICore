@@ -22,7 +22,7 @@ namespace APICore.Common
             if (account == null)
             {
                 // not logged in
-                context.Result = new JsonResult(ResponseModel.ResponseWithUnAuthorize());
+                context.Result = new JsonResult(func.ResponseWithUnAuthorize());
             }
         }
     }

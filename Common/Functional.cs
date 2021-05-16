@@ -14,11 +14,16 @@ namespace APICore.Common
 {
     public class Functional
     {
+        private ResponseModel _response;
         private bool result = false;
+
+        public Functional(){
+            _response = new ResponseModel();
+        }
 
         public string JsonSerialize(object obj)
         {
-            return JsonConvert.SerializeObject(obj, Formatting.Indented);
+            return JsonConvert.SerializeObject(obj);
         }
 
         public void JsonDeserialize<T>(T obj, string json)
@@ -30,50 +35,20 @@ namespace APICore.Common
             return JsonConvert.DeserializeObject<T>(json);
         }
 
-        public string GetStateHttp(StatusHttp code)
-        {
-            string resultCode = "";
-            switch (code)
-            {
-                case StatusHttp.Created:
-                    resultCode = "201";
-                    break;
-                case StatusHttp.Accepted:
-                    resultCode = "202";
-                    break;
-                case StatusHttp.InvalidToken:
-                    resultCode = "400";
-                    break;
-                case StatusHttp.SecurityError:
-                    resultCode = "401";
-                    break;
-                case StatusHttp.NotFound:
-                    resultCode = "404";
-                    break;
-                case StatusHttp.InternalError:
-                    resultCode = "500";
-                    break;
-                default:
-                    resultCode = "200";
-                    break;
-            }
+       
 
-            return resultCode;
-        }
-
-        public enum StatusHttp
+        public ResponseModel ResponseWithUnAuthorize()
         {
-            OK,
-            Created,
-            Accepted,
-            NotFound,
-            InternalError,
-            InvalidToken,
-            SecurityError
+            _response._statusCode = _response.GetStateHttp(ResponseModel.StatusHttp.SecurityError);
+            _response._errorMessage = "Unauthorized";
+            return _response;
         }
-        public void SetResponseHeader(HttpContext context, string key = "Content-Type", string value = "application/json")
+        public ResponseModel SerializeObject(DataTable _data, StatusHttp _statusCode, string _errorMessage)
         {
-            context.Response.Headers.Add(key, value);
+            _response._data = _data;
+            _response._statusCode = _response.GetStateHttp(_statusCode);
+            _response._errorMessage = _errorMessage;
+            return _response;
         }
 
         #region Directory & File

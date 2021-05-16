@@ -18,24 +18,20 @@ namespace APICore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Produces("application/json")]
     public class AuthorizeController : ControllerBase
     {
         Functional func;
         AuthorizeModel auth;
-        private readonly HttpContext Context;
-        public AuthorizeController(IHttpContextAccessor contextAccessor, IOptions<StateConfigs> configs)
+        public AuthorizeController(IOptions<StateConfigs> configs)
         {
             func = new Functional();
-            Context = contextAccessor.HttpContext;
             auth = new AuthorizeModel(configs);
         }
         [HttpPost]
         public UserInformationModel PostLogin(RequestAuthorizeModel request)
         {
             string result = auth.Authentication(request.Username, request.Password);
-
-            func.SetResponseHeader(Context);
-
             return func.JsonDeserialize<UserInformationModel>(result);
         }
     }

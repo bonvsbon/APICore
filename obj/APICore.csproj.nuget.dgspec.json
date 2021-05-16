@@ -99,6 +99,10 @@
             "System.Net.Http": {
               "target": "Package",
               "version": "[4.3.4, )"
+            },
+            "microsoft.aspnetcore.mvc.newtonsoftjson": {
+              "target": "Package",
+              "version": "[3.0.0, )"
             }
           },
           "imports": [
