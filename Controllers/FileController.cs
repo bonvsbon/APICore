@@ -42,6 +42,7 @@ namespace Services.Api.Controllers
             string callDate = "";
             string callTime = "";
             string strTelephone = "";
+            string fileforInsert = "";
             FileInfo info;
             List<string> fileformat = new List<string>();
             List<string> strInputFile = new List<string>();
@@ -55,6 +56,34 @@ namespace Services.Api.Controllers
                     fileName = file.FileName;
 
                     localPath = Path.Combine(targetDirectory, fileName);
+
+                    fileformat = fileName.Split('_').ToList();
+                    strPhone = fileformat[0].Split(" ").ToList();
+                    callDate = DateTime.ParseExact(fileformat[1], "yyMMdd", new CultureInfo("en-US")).ToString("yyyy-MM-dd");
+                    callTime = string.Format(
+                        "{0}:{1}:{2}",
+                        string.Concat(fileformat[2][0], fileformat[2][1]),
+                        string.Concat(fileformat[2][2], fileformat[2][3]),
+                        string.Concat(fileformat[2][4], fileformat[2][5])
+                        );
+
+                    if(strPhone.Count > 2)
+                    {
+                        for(int i = 1; i < strPhone.Count; i++)
+                        {
+                            if(!string.IsNullOrEmpty(strTelephone)) strTelephone += " ";
+                            strTelephone += strPhone[i];
+                        }
+                    }
+                    else
+                    {
+                        strTelephone = strPhone[1];
+                    }
+
+                    fileInput = string.Format("{0}_{1}", fileformat[1], fileformat[2]);
+
+                    strInputFile = fileInput.Split(".").ToList();
+
 
                     if (!_func.CheckExistingDirectory(targetDirectory))
                     {
@@ -71,42 +100,18 @@ namespace Services.Api.Controllers
                     }
                     using (var client = new WebClient())
                     {
-                        savePath = string.Format("{0}/{1}", _state.FtpConfig.ftpPath, fileName);
+                        fileforInsert = string.Format("{0}_{1}_{2}", username, strTelephone, strInputFile[0]);
+                        savePath = string.Format("{0}/{1}.m4a", _state.FtpConfig.ftpPath, fileforInsert);
                         client.Credentials = new NetworkCredential(_state.FtpConfig.username, _state.FtpConfig.password);
                         client.UploadFile(savePath, WebRequestMethods.Ftp.UploadFile, localPath);
                     }
 
                     info = _func.GetFileInformation(localPath);
                     // Log File for Other Process
-                    fileformat = fileName.Split('_').ToList();
-
-                    fileInput = string.Format("{0}_{1}", fileformat[1], fileformat[2]);
-
-                    callDate = DateTime.ParseExact(fileformat[1], "yyMMdd", new CultureInfo("en-US")).ToString("yyyy-MM-dd");
-                    callTime = string.Format(
-                        "{0}:{1}:{2}",
-                        string.Concat(fileformat[2][0], fileformat[2][1]),
-                        string.Concat(fileformat[2][2], fileformat[2][3]),
-                        string.Concat(fileformat[2][4], fileformat[2][5])
-                        );
-
-                    strInputFile = fileInput.Split(".").ToList();
                     strOriginFile = fileName.Split(".").ToList();
-                    strPhone = fileformat[0].Split(" ").ToList();
-                    if(strPhone.Count > 2)
-                    {
-                        for(int i = 1; i < strPhone.Count; i++)
-                        {
-                            if(!string.IsNullOrEmpty(strTelephone)) strTelephone += " ";
-                            strTelephone += strPhone[i];
-                        }
-                    }
-                    else
-                    {
-                        strTelephone = strPhone[1];
-                    }
+                    
                     _file.REST_InsertFilelog(
-                            FileName : strInputFile[0],
+                            FileName : fileforInsert,
                             OriginalFile : strOriginFile[0],
                             FileSize : info.Length,
                             Extension : strInputFile[1],

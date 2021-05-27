@@ -14,7 +14,9 @@ namespace APICore.Models {
             public Storages StoragePath { get; set; }
             public FTP FtpConfig { get; set; }
             public Ldaps Ldap { get; set; }
-
+            public Resource ResourceUrl { get; set; }
+            
+            
         }
         public class ConnectionString {
             public string isProd { get; set; }
@@ -36,6 +38,9 @@ namespace APICore.Models {
 
             public string shortDomainName { get; set; }
 
+        }
+        public class Resource {
+            public string documentsUrl { get; set; }            
         }
     }
 }
