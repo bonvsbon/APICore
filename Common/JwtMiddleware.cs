@@ -54,7 +54,7 @@ namespace APICore.Common
             catch (Exception e)
             {
                 // if jwt validation fails then do nothing 
-                throw e;
+                // throw e;
             }
         } 
     }

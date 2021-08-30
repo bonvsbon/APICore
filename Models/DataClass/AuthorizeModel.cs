@@ -81,5 +81,24 @@ namespace APICore.Models {
 
             return strErrMsg;
         }
+
+        public string AuthenticationbyPass(string username, string password)
+        {
+            UserInformationModel response = new UserInformationModel();
+            if(username == "zwiz" && password == "securebyNextcapital")
+            {
+                response.EmployeeCode = "";
+                response.EmployeeName = "LineBot";
+                response.Token = TokenGenerator.GenerateToken(username);
+                response.Username = username;
+            }
+            else
+            {
+                return "Invalid Username or Password";
+            }
+
+            return JsonConvert.SerializeObject(response);
+        }
+
     }
 }

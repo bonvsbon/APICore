@@ -18,9 +18,7 @@ namespace APICore.dbContext
 {
     public class ContextBase : IDisposable
     {
-
-
-  private string _connStr = "";
+        private string _connStr = "";
         private bool _isTrans = false;
         private bool _isSqlServer = false;
         private bool _isOracle = false;
@@ -160,6 +158,7 @@ namespace APICore.dbContext
             {
                 try
                 {
+                    dt = new DataTable();
                     _dal._SqlDb.Open();
                     _command = new SqlCommand(sql.GetStatement(), _dal._SqlDb);
                     AddParameter(sql);
@@ -199,6 +198,7 @@ namespace APICore.dbContext
                 }
                 catch (Exception e)
                 {
+                    _dal._SqlDb.Close();
                     return e.Message;
                 }
                 finally

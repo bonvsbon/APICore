@@ -28,7 +28,7 @@ namespace APICore.Common {
 						new Claim (ClaimTypes.NameIdentifier, userId.ToString ()),
 					}),
 					// Expires = DateTime.UtcNow.AddMinutes(5),
-					Expires = DateTime.UtcNow.AddDays(3),
+					Expires = DateTime.UtcNow.AddDays(1),
 					Issuer = myIssuer, 
 					Audience = myAudience,
 					SigningCredentials = new SigningCredentials(mySecurityKey, SecurityAlgorithms.HmacSha256Signature)

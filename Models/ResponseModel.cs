@@ -44,6 +44,8 @@ namespace APICore.Models
             return resultCode;
         }
 
+
+
         public enum StatusHttp
         {
             OK,
@@ -54,5 +56,50 @@ namespace APICore.Models
             InvalidToken,
             SecurityError
         }
+    }
+
+    
+    public class OTPResultModel
+    {
+        public string message { get; set; }
+    }
+
+    public class RequestPaymentGatewayModel
+    {
+        public string IDCard { get; set; }
+        public string AgreementNo { get; set; }
+    }
+
+    public class AccountBarcodeModel
+    {
+        public string AgreementNo { get; set; }
+        public string NextCard { get; set; }
+    }
+
+    public class PaymentModel
+    {
+        public string refCard { get; set; }
+        public string Prefix { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+    }
+
+    public class SMSResponse 
+    {
+        public string phoneNumber { get; set; }
+        // public string OTP { get; set; }   
+        public string result { get; set; }     
+    }
+    
+    public class SMSModel
+    {
+        public string User { get; set; }
+        public string Pass { get; set; }
+        public string Type { get; set; }
+        public string To { get; set; }
+        public string From { get; set; }
+        public string Text { get; set; }
+        public string ServID { get; set; }
+
     }
 }

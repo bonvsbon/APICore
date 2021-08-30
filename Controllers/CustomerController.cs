@@ -32,7 +32,7 @@ namespace APICore.Controllers {
             state = config.Value;
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpPost]
         public IActionResult index([FromBody] RequestModel request) {
             ResponseModel result = new ResponseModel();
@@ -58,7 +58,7 @@ namespace APICore.Controllers {
 
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpPost]
         public IActionResult purchaseHistory([FromBody] RequestModel request) {
             ResponseModel result = new ResponseModel();
@@ -83,7 +83,7 @@ namespace APICore.Controllers {
             }
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpPost]
         public IActionResult installmentTable([FromBody] RequestModel request) {
             ResponseModel result = new ResponseModel();

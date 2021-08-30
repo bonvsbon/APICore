@@ -15,6 +15,7 @@ namespace APICore.Models {
             public FTP FtpConfig { get; set; }
             public Ldaps Ldap { get; set; }
             public Resource ResourceUrl { get; set; }
+            public SMSConfig SMSConfigs { get; set; }
             
             
         }
@@ -41,6 +42,15 @@ namespace APICore.Models {
         }
         public class Resource {
             public string documentsUrl { get; set; }            
+        }
+        public class SMSConfig
+        {
+            public string From { get; set; }
+            public string User { get; set; }
+            public string Pass { get; set; }
+            public string Type { get; set; }
+            public string ServID { get; set; }
+            public string UrlBase { get; set; }                                    
         }
     }
 }

@@ -40,6 +40,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "BarcodeLib": {
+              "target": "Package",
+              "version": "[2.4.0, )"
+            },
             "IdentityManager": {
               "target": "Package",
               "version": "[1.0.0-beta5-5, )"
@@ -63,6 +67,10 @@
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.1, )"
+            },
+            "QRCoder": {
+              "target": "Package",
+              "version": "[1.4.1, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -123,7 +131,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.412\\RuntimeIdentifierGraph.json"
         }
       }
     }
