@@ -1,20 +1,35 @@
+using System.Collections;
+using System;
+// using System.Xml.Xsl.Runtime;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using APICore.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.IO;
+using System.Drawing;
+
 namespace APICore.Common
 {
     public class LineApiController
     {
         Functional func;
+        string ChannelAccessToken = "";
+        LineMessageTemplate.RichMenuResponse richMenu;
         public LineApiController()
         {
             func = new Functional();
+            richMenu = new LineMessageTemplate.RichMenuResponse();
+            ChannelAccessToken = "RT5KbvDWjJvYECaWsjh6oVMfcTF0nKGrKr0w2RplJl0Z/uIarhvnlJ8p2zYxyHJ9fjCL1k/KFzh1xMrYY9wLJktxYeM4S8JnxQ/MDdaSeJM7UGLlZfQpOIFnCNe84g3N8T0QEdk7mJTWQMggOCj9fAdB04t89/1O/w1cDnyilFU=";
         }
-        private static readonly HttpClient client = new HttpClient();
-        static string ChannelAccessToken = "RT5KbvDWjJvYECaWsjh6oVMfcTF0nKGrKr0w2RplJl0Z/uIarhvnlJ8p2zYxyHJ9fjCL1k/KFzh1xMrYY9wLJktxYeM4S8JnxQ/MDdaSeJM7UGLlZfQpOIFnCNe84g3N8T0QEdk7mJTWQMggOCj9fAdB04t89/1O/w1cDnyilFU=";
+        public LineApiController(string ChannelName)
+        {
+            func = new Functional();
+            richMenu = new LineMessageTemplate.RichMenuResponse();
+            ChannelAccessToken = "q281ubFyT1L3Z1gAyrcLdLY4mHv2hXJFqAb/MEUO2OncgbgXdSsR6BDCXsrTZh0I3haZwDDaz1lrKF694gC0fTnp/CnbLma8WkiHW3UXwSf6gHxU5lNJP/IYeb1+KQRFeun9E5jJT8qx9lpQpY1S9AdB04t89/1O/w1cDnyilFU=";
+        }
+        private static HttpClient client = new HttpClient();
         #region Call API
         public async Task CallApi(LineResponseModel data)
         {
@@ -37,6 +52,17 @@ namespace APICore.Common
             var contents = await response.Content.ReadAsStringAsync();           
         }
 
+        public async Task CallApiMultiCast(object data)
+        {
+            StringContent content = new StringContent(func.JsonSerialize(data),
+            System.Text.Encoding.UTF8, 
+            "application/json");
+            client.DefaultRequestHeaders.Authorization 
+                         = new AuthenticationHeaderValue("Bearer", ChannelAccessToken);
+            var response = await client.PostAsync("https://api.line.me/v2/bot/message/multicast", content);
+            var contents = await response.Content.ReadAsStringAsync();           
+        }
+
         public async Task<UserProfile> GetUserProfile(string UserId)
         {
             client.DefaultRequestHeaders.Authorization 
@@ -46,6 +72,62 @@ namespace APICore.Common
             return func.JsonDeserialize<UserProfile>(contents);
         }
 
+        public async Task<LineMessageTemplate.RichMenuResponse> SetupMenu(object data, string type)
+        {
+            StringContent content = new StringContent(func.JsonSerialize(data),
+            System.Text.Encoding.UTF8, 
+            "application/json");
+            client.DefaultRequestHeaders.Authorization 
+                         = new AuthenticationHeaderValue("Bearer", ChannelAccessToken);
+            var response = await client.PostAsync("https://api.line.me/v2/bot/richmenu", content);
+            var contents = await response.Content.ReadAsStringAsync();
+
+            richMenu = func.JsonDeserialize<LineMessageTemplate.RichMenuResponse>(contents);
+            return richMenu;
+        }
+
+        public async Task SetDefaultMenu(string richMenuId, string userId)
+        {
+            client.DefaultRequestHeaders.Authorization 
+                         = new AuthenticationHeaderValue("Bearer", ChannelAccessToken);
+            var response = await client.PostAsync("https://api.line.me/v2/bot/user/" + userId + "/richmenu/" + richMenuId, null);
+            var contents = await response.Content.ReadAsStringAsync();
+
+        }
+        public async Task DeleteMenu(string richMenuId)
+        {
+            // StringContent content = new StringContent(func.JsonSerialize(data),
+            // System.Text.Encoding.UTF8, 
+            // "application/json");
+            client.DefaultRequestHeaders.Authorization 
+                         = new AuthenticationHeaderValue("Bearer", ChannelAccessToken);
+            var response = await client.GetAsync("https://api.line.me/v2/bot/richmenu/" + richMenuId);
+            var contents = await response.Content.ReadAsStringAsync();
+
+        }
+        public async Task SetupBackgroundMenu(string richMenuId, string filename)
+        {
+            List<string> files = Directory.GetFiles("Storages/template/").ToList();
+            string path = Path.Combine("Storages/template/", filename);
+            string file = files.Where(t => t.Contains(filename)).FirstOrDefault();
+            
+            using (var stream = File.OpenRead(path)) {
+                var file_content = new ByteArrayContent(new StreamContent(stream).ReadAsByteArrayAsync().Result);
+                file_content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+                file_content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+                {
+                    FileName = filename,
+                    Name = filename.Replace(".png", ""),
+                };
+
+                client.DefaultRequestHeaders.Authorization 
+                            = new AuthenticationHeaderValue("Bearer", ChannelAccessToken);
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("image/png"));
+                var response = await client.PostAsync("https://api-data.line.me/v2/bot/richmenu/" + richMenuId + "/content", file_content);
+                var contents = await response.Content.ReadAsStringAsync();
+            }
+
+        }
         #endregion
 
 #region Bubble
@@ -106,6 +188,78 @@ namespace APICore.Common
         footerContents.action.type = "message";
         footerContents.action.label = "ดูช่องทางชำระเงิน";
         footerContents.action.text = "ช่องทางชำระเงิน";
+        footerContents.color = "#20409A";
+        //footerContents.color = "#FDB813";
+        footerContents.style = "link";
+
+        footer.contents.Add(footerContents);
+
+        template.header = header;
+        template.hero = hero;
+        template.body = body;
+        template.footer = footer;
+        subMain.contents = template;
+        main.messages.Add(subMain);
+
+        return main;
+    }
+    public dupBubbleMulticast SetBubbleMessageMultiCast(string strMessage, string appNo)
+    {
+        dupBubbleMulticast main = new dupBubbleMulticast();
+        dupBubbleSubMain subMain = new dupBubbleSubMain();
+        dupBubbleTemplate template = new dupBubbleTemplate();
+        dupBubbleHeader header = new dupBubbleHeader();
+        dupBubbleHeaderContents headerContents = new dupBubbleHeaderContents();
+        dupBubbleHero hero = new dupBubbleHero();
+        dupBubbleBody body = new dupBubbleBody();
+        dupBubbleContents contents = new dupBubbleContents();
+        dupBubbleFooter footer = new dupBubbleFooter();
+        dupBubbleFooterContents footerContents = new dupBubbleFooterContents();
+
+        subMain.type = "flex";
+        subMain.altText = "This is a Flex Message";
+
+        template.type = "bubble";
+        header.type = "box";
+        header.layout = "horizontal";
+        header.position = "relative";
+        header.backgroundColor = "#20409A";
+        headerContents.type = "text";
+        headerContents.text = "แจ้งเตือนงานใหม่!";
+        headerContents.weight = "bold";
+        headerContents.size = "lg";
+        headerContents.color = "#FFFFFFFF";
+        headerContents.contents = new List<object>();
+        
+        header.contents.Add(headerContents);
+
+        hero.type = "image";
+        hero.url = "https://www.nextcapital.co.th/uploads/06F1/files/b0b78757ee3181d6ce333da2a31128ec.png";
+        hero.size = "full";
+        hero.aspectRatio = "16:8";
+        hero.aspectMode = "cover";
+        hero.action.type = "uri";
+        hero.action.label = "Action";
+        hero.action.uri = "https://www.nextcapital.co.th";
+        body.type = "box";
+        body.layout = "horizontal";
+        body.spacing = "md";
+        contents.type = "text";
+        contents.text = strMessage;
+        contents.weight = "regular";
+        contents.wrap = true;
+        contents.style = "normal";
+        contents.contents = new List<object>();
+        
+        body.contents.Add(contents);
+
+        footer.type = "box";
+        footer.layout = "horizontal";
+        footer.backgroundColor = "#FDB813";
+        footerContents.type = "button";
+        footerContents.action.type = "message";
+        footerContents.action.label = ">>> รับงานนี้ <<<";
+        footerContents.action.text = appNo;
         footerContents.color = "#20409A";
         //footerContents.color = "#FDB813";
         footerContents.style = "link";

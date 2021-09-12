@@ -64,11 +64,13 @@ namespace APICore.Models
                     CallAPI(urlData);
                     response.phoneNumber = dt.Rows[0]["OriginalPhoneNumber"].ToString();
                     response.result = dt.Rows[0]["result"].ToString();
+                    response.refOTP = dt.Rows[0]["OTP_Reference"].ToString();
                 }
                 else
                 {
                     response.phoneNumber = "";
                     response.result = "";
+                    response.refOTP = "";
                     return response;
                 }
     

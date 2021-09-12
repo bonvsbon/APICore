@@ -4,5 +4,10 @@
         <name>APICore</name>
     </assembly>
     <members>
+        <member name="T:APICore.Models.DACModel">
+            <summary>
+            Dealer AND Checker Model
+            </summary>
+        </member>
     </members>
 </doc>

@@ -88,7 +88,8 @@ namespace APICore.Models
     {
         public string phoneNumber { get; set; }
         // public string OTP { get; set; }   
-        public string result { get; set; }     
+        public string result { get; set; }   
+        public string refOTP { get; set; }  
     }
     
     public class SMSModel

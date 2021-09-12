@@ -16,6 +16,27 @@ namespace APICore.Models
         public List<EventsModel> events = new List<EventsModel>();      
 
     }
+
+    public class ExternalRequest
+    {
+        public string AppNo { get; set; }
+        public string LineUserId { get; set; }
+        
+        
+    }
+
+    public class ExternalNotice
+    {
+        public string CheckerName { get; set; }
+        public string TextStatus { get; set; }
+        public string ApplicationNo { get; set; }
+        public string DealerName { get; set; }
+        public string Remark { get; set; }
+        public string State { get; set; }
+        
+        
+    }
+
     public class EventsModel
     {
         public string type { get; set; }

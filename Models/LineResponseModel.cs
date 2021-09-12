@@ -8,6 +8,16 @@ namespace APICore.Models
         public string replyToken { get; set; }
         public List<MessageResponseModel> messages = new List<MessageResponseModel>();
     }
+    public class PushLineResponseModel
+    {
+        public string to { get; set; }
+        public List<MessageResponseModel> messages = new List<MessageResponseModel>();
+    }
+    public class PushLineResponseMultiCastModel
+    {
+        public List<string> to = new List<string>();
+        public List<MessageResponseModel> messages = new List<MessageResponseModel>();
+    }
 
     public class MessageResponseModel
     {
@@ -112,6 +122,10 @@ namespace APICore.Models
     }
     public class dupBubbleMain {
         public string to { get; set; }
+        public List<dupBubbleSubMain> messages = new List<dupBubbleSubMain>();
+    }
+    public class dupBubbleMulticast {
+        public List<string> to = new List<string>();
         public List<dupBubbleSubMain> messages = new List<dupBubbleSubMain>();
     }
     public class BubbleSubMain {
