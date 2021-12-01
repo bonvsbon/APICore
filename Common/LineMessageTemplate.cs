@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using APICore.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Data;
 
 namespace APICore.Common
 {
@@ -16,10 +17,9 @@ namespace APICore.Common
         {
             string message = 
             @"
-สวัสดีคุณ {0} 
+🎉สวัสดีคุณ {0} 
 เพื่อเริ่มต้นการใช้งาน
-ขอทราบ Secret Code ที่ได้รับทาง SMS
-สำหรับยืนยันตัวตนด้วยครับ 
+ขอทราบ Secret Code ที่ได้รับทาง SMS เพื่อยืนยันตัวตนด้วยครับ
             ";
 
             return message;
@@ -54,7 +54,7 @@ namespace APICore.Common
 @"{0} กดรับงานแล้ว!
 เลขงาน : {1}
 {2}
-เบอร์ติดต่อ : 0941610031
+เบอร์ติดต่อ : {3}
 ";
 
             return message;
@@ -69,13 +69,17 @@ namespace APICore.Common
         public string MessageAlertTaskList()
         {
             string message = 
-            @"Dealer : {0}
+            @"รหัสดีลเลอร์ : {6}
+รหัสสาขาต้นทาง : {7}
+Dealer : {0}
 เลขงาน : {1}
 วัน/เวลาที่ขอ : {2}
+เบอร์ติดต่อสาขา : {8}
 
 ลูกค้า : {3}
 พื้นที่ : {4}
-เบอร์ติดต่อ : {5}";
+เบอร์ติดต่อ : {5}
+";
 
             return message;
         }
@@ -85,10 +89,16 @@ namespace APICore.Common
             string message = "";
             if(state == "checkerupdate" && request.TextStatus != "กดรับงาน")
             {
-                message = string.Format(@"{0} {1}แล้ว!
-เลขงาน {2}
-{3}
-หมายเหตุ : {4}", request.CheckerName, request.TextStatus.Replace("แล้ว", ""), request.ApplicationNo, request.DealerName, request.Remark);
+//                 message = string.Format(@"{0} {1}แล้ว!
+// เลขงาน {2}
+// {3}
+// หมายเหตุ : {4}", request.CheckerName, request.TextStatus.Replace("แล้ว", ""), request.ApplicationNo, request.DealerName, request.Remark);
+                message = string.Format(@"อัพเดทสถานะ 
+เลขงาน {0}
+สถานะล่าสุด {1}แล้ว!
+อัพเดทโดย {2}
+ชื่อร้าน {3}
+หมายเหตุ {4}", request.ApplicationNo, request.TextStatus.Replace("แล้ว", ""), request.CheckerName, request.DealerName, request.Remark);
             }
             else if (state == "checkerupdate" && request.TextStatus == "กดรับงาน")
             {
@@ -97,7 +107,8 @@ namespace APICore.Common
 {3}
 หมายเหตุ : {4}
 
-เบอร์ติดต่อ : {5}", request.CheckerName, request.TextStatus.Replace("แล้ว", ""), request.ApplicationNo, request.DealerName, request.Remark, "0941610031");
+เบอร์ติดต่อ : {5}", request.CheckerName, request.TextStatus.Replace("แล้ว", ""), request.ApplicationNo, request.DealerName, request.Remark, request.ContactPerson);
+
             }
             else if (state == "dealerupdate")
             {
@@ -115,8 +126,33 @@ namespace APICore.Common
             
             return message;
         }
+
+        public string InformationMessage(string TextStatus, string cRecord)
+        {
+            string message = @"
+สถานะ : {0}
+จำนวน : {1} รายการ
+";
+
+            message = string.Format(message, TextStatus, cRecord);
+
+            return message;
+        }
+
+        public string MessageNeedHelp()
+        {
+            string message = @"เรียน ทุกท่าน!
+ระบบพบการแจ้งปัญหาจาก {0} สาขา {1} {2}
+วัน / เวลา {3}
+รายละเอียดปัญหา
+{4}
+            ";
+
+            return message;
+        }
+
         #region Flex Message
-        public FlexMessageMain SetupFlexMessage()
+        public FlexMessageMain SetupFlexMessage(DataTable dt)
         {
             FlexMessageMain main = new FlexMessageMain();
             FlexMessage messages = new FlexMessage();
@@ -135,83 +171,90 @@ namespace APICore.Common
             messages.type = "flex";
             messages.altText = "Check Status Task";
             carousel.type = "carousel";
+            
 
             // for loop for script
 
-            // for (int i = 0; i < dt.Rows.Count; i++)
-            header = new FlexBubbleHeader();
-            hcontent = new FlexBubbleHeaderContent();
-            hero = new FlexBubbleHero();
-            haction = new FlexBubbleHeroAction();
-            body = new FlexBubbleBody();
-            bcontent = new FlexBubbleBodyContent();
-            footer = new FlexBubbleFooter();
-            fcontent = new FlexBubbleFooterContent();
-            fcaction = new FlexBubbleFooterContentAction();
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                // header = new FlexBubbleHeader();
+                // hcontent = new FlexBubbleHeaderContent();
+                hero = new FlexBubbleHero();
+                haction = new FlexBubbleHeroAction();
+                body = new FlexBubbleBody();
+                bubble = new FlexBubble();
+                bcontent = new FlexBubbleBodyContent();
+                footer = new FlexBubbleFooter();
+                fcontent = new FlexBubbleFooterContent();
+                fcaction = new FlexBubbleFooterContentAction();
+                
+                bubble.type = "bubble";
+                //// header
+                // header.type = "box";
+                // header.layout = "horizontal";
+                // header.position = "relative";
+                // hcontent.contents = new List<object>();
+                // hcontent.type = "text";
+                // hcontent.text = "25";
+                // hcontent.weight = "bold";
+                // hcontent.size = "md";
+                // hcontent.color = "#000000";
+                // header.contents.Add(hcontent);
+                // bubble.header = header;
+                //// end header
 
-            bubble.type = "bubble";
-            // header
-            header.type = "box";
-            header.layout = "horizontal";
-            header.position = "relative";
-            hcontent.contents = new List<object>();
-            hcontent.type = "text";
-            hcontent.text = "25";
-            hcontent.weight = "bold";
-            hcontent.size = "md";
-            hcontent.color = "#000000";
-            header.contents.Add(hcontent);
-            bubble.header = header;
-            // end header
+                // hero
+                haction.type = "uri";
+                haction.label = "Action";
+                // haction.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/" + dt.Rows[i]["ActionButton"].ToString(); // **
+                haction.uri = "https://liff.line.me/1656450586-DzJv1LGJ/" + dt.Rows[i]["PageState"].ToString();// + dt.Rows[i]["ActionButton"].ToString(); // **
+                
+                hero.type = "image";
+                hero.url = "https://www.nextcapital.co.th/uploads/06F1/files/"+dt.Rows[i]["imageName"].ToString(); // **
+                hero.size = "full";
+                hero.aspectRatio = "20:13";
+                hero.aspectMode = "cover";
+                hero.action = haction;
+                bubble.hero = hero;
+                // end hero
 
-            // hero
-            haction.type = "uri";
-            haction.label = "Action";
-            haction.uri = "https://synergy.nextcapital.co.th"; // **
-            hero.type = "image";
-            hero.url = "https://www.nextcapital.co.th/uploads/06F1/files/6f5e1cd72348e6a75239ae9f2bcf8042.jpg"; // **
-            hero.size = "full";
-            hero.aspectRatio = "20:13";
-            hero.aspectMode = "cover";
-            hero.action = haction;
-            bubble.hero = hero;
-            // end hero
+                // body
+                body.type = "box";
+                body.layout = "horizontal";
+                body.spacing = "md";
+                bcontent.contents = new List<object>();
+                bcontent.type = "text";
+                bcontent.text = InformationMessage(dt.Rows[i]["TextStatus"].ToString(), dt.Rows[i]["cRecord"].ToString()); // **
+                bcontent.weight = "regular";
+                bcontent.wrap = true;
+                bcontent.style = "normal";
+                body.contents.Add(bcontent);
+                bubble.body = body;
+                // end body
 
-            // body
-            body.type = "box";
-            body.layout = "horizontal";
-            body.spacing = "md";
-            bcontent.contents = new List<object>();
-            bcontent.type = "text";
-            bcontent.text = "message body"; // **
-            bcontent.weight = "regular";
-            bcontent.wrap = "true";
-            bcontent.style = "normal";
-            body.contents.Add(bcontent);
-            bubble.body = body;
-            // end body
+                // footer
+                footer.type = "box";
+                footer.layout = "horizontal";
+                fcontent.type = "button";
+                fcaction.type = "uri";
+                fcaction.label = dt.Rows[i]["footerText"].ToString(); // **
+                // fcaction.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/" + dt.Rows[i]["ActionButton"].ToString(); // **
+                fcaction.uri = "https://liff.line.me/1656450586-DzJv1LGJ/" + dt.Rows[i]["PageState"].ToString();// + dt.Rows[i]["ActionButton"].ToString(); // **
+                fcontent.action = fcaction;
+                footer.contents.Add(fcontent);
+                bubble.footer = footer;
+                // end footer
 
-            // footer
-            footer.type = "box";
-            footer.layout = "horizontal";
-            fcontent.type = "button";
-            fcaction.type = "uri";
-            fcaction.label = "Label Footer"; // **
-            fcaction.uri = "https://synergy.nextcapital.co.th"; // **
-            fcontent.action = fcaction;
-            footer.contents.Add(fcontent);
-            bubble.footer = footer;
-            // end footer
-
-            carousel.contents.Add(bubble);
-
+                carousel.contents.Add(bubble);
+            }
             messages.contents = carousel;
-            
+
             main.messages.Add(messages);
 
             return main;
         }
         #endregion
+
         #region Carousel
         public BubbleMain SetCarouselMessage()
         {
@@ -319,7 +362,8 @@ namespace APICore.Common
 
             // return main;
         }
-#endregion
+        #endregion
+        
         #region Setup Rich Menu
         public RichMenuMain SetupRichMenuChecker(string LineUserId)
         {
@@ -344,7 +388,8 @@ namespace APICore.Common
             bound.width = "1242";
             bound.height = "844";
             action.type = "uri";
-            action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/TaskList?UserLineId=" + LineUserId + "&cmd=Pending";
+            // action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/TaskList?EncryptionKey=" + LineUserId + "&cmd=Pending";
+            action.uri = "https://liff.line.me/1656450586-DzJv1LGJ/TaskList";
             area.bounds = bound;
             area.action = action;
             // areas.Add(area);
@@ -376,9 +421,28 @@ namespace APICore.Common
             bound.width = "1244";
             bound.height = "841";
             action.type = "uri";
-            action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/TaskList?UserLineId=" + LineUserId + "&cmd=OnHand";
+            // action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/TaskList?EncryptionKey=" + LineUserId + "&cmd=OnHand";
+            action.uri = "https://liff.line.me/1656450586-DzJv1LGJ/UpdateCase";
             area.bounds = bound;
             area.action = action;
+            // areas.Add(area);
+            rich.areas.Add(area);
+
+            // bound 4
+            bound = new RichMenuBound();
+            action = new RichMenuAction();
+            area = new RichMenuArea();
+            txtMessage = new RichMenuText();
+            bound.x = "1249";
+            bound.y = "857";
+            bound.width = "1249";
+            bound.height = "817";
+            // action.type = "uri";
+            // action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/TaskList?UserLineId=" + LineUserId + "&cmd=OnHand";
+            txtMessage.type = "message";
+            txtMessage.text = "ช่วยเหลือ";
+            area.bounds = bound;
+            area.action = txtMessage;
             // areas.Add(area);
             rich.areas.Add(area);
 
@@ -406,7 +470,8 @@ namespace APICore.Common
             bound.width = "1255";
             bound.height = "828";
             action.type = "uri";
-            action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/Default?UserLineId="+LineUserId + "&menuId=1";
+            // action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/Default?EncryptionKey="+LineUserId + "&menuId=1";
+            action.uri = "https://liff.line.me/1656450586-DzJv1LGJ/CreateCase";
             area.bounds = bound;
             area.action = action;
             rich.areas.Add(area);
@@ -420,7 +485,8 @@ namespace APICore.Common
             bound.width = "1225";
             bound.height = "831";
             action.type = "uri";
-            action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/UpdateStatus?UserLineId=" + LineUserId + "&cmd=OnHand";
+            // action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/UpdateStatus?EncryptionKey=" + LineUserId + "&cmd=OnHand";
+            action.uri = "https://liff.line.me/1656450586-DzJv1LGJ/UpdateCase";
             area.bounds = bound;
             area.action = action;
             rich.areas.Add(area);
@@ -438,6 +504,24 @@ namespace APICore.Common
             txtMessage.text = "เช็คสถานะ";
             area.bounds = bound;
             area.action = txtMessage;
+            rich.areas.Add(area);
+
+            // bound 4
+            bound = new RichMenuBound();
+            action = new RichMenuAction();
+            area = new RichMenuArea();
+            txtMessage = new RichMenuText();
+            bound.x = "1249";
+            bound.y = "857";
+            bound.width = "1249";
+            bound.height = "817";
+            // action.type = "uri";
+            // action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/TaskList?UserLineId=" + LineUserId + "&cmd=OnHand";
+            txtMessage.type = "message";
+            txtMessage.text = "ช่วยเหลือ";
+            area.bounds = bound;
+            area.action = txtMessage;
+            // areas.Add(area);
             rich.areas.Add(area);
 
             return rich;
@@ -493,7 +577,7 @@ namespace APICore.Common
         public class FlexMessageMain
         {
             public List<FlexMessage> messages = new List<FlexMessage>();
-            public string replyToken { get; set; }
+            public string to { get; set; }
         }
 
         public class FlexMessage 
@@ -512,7 +596,7 @@ namespace APICore.Common
         public class FlexBubble
         {
             public string type {get;set;}
-            public FlexBubbleHeader header = new FlexBubbleHeader();
+            // public FlexBubbleHeader header = new FlexBubbleHeader();
             public FlexBubbleHero hero = new FlexBubbleHero();
             public FlexBubbleBody body = new FlexBubbleBody();
             public FlexBubbleFooter footer = new FlexBubbleFooter();
@@ -568,7 +652,7 @@ namespace APICore.Common
             public string type { get; set; }
             public string text { get; set; }
             public string weight { get; set; }
-            public string wrap { get; set; }
+            public bool wrap { get; set; }
             public string style { get; set; }
         }
         #endregion

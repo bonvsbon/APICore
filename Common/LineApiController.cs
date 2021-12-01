@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text;
 using System.Collections;
 using System;
 // using System.Xml.Xsl.Runtime;
@@ -15,19 +17,24 @@ namespace APICore.Common
     public class LineApiController
     {
         Functional func;
+        LineActionModel action;
         string ChannelAccessToken = "";
+        string AccessTokenForSupport = "";
         LineMessageTemplate.RichMenuResponse richMenu;
         public LineApiController()
         {
             func = new Functional();
             richMenu = new LineMessageTemplate.RichMenuResponse();
             ChannelAccessToken = "RT5KbvDWjJvYECaWsjh6oVMfcTF0nKGrKr0w2RplJl0Z/uIarhvnlJ8p2zYxyHJ9fjCL1k/KFzh1xMrYY9wLJktxYeM4S8JnxQ/MDdaSeJM7UGLlZfQpOIFnCNe84g3N8T0QEdk7mJTWQMggOCj9fAdB04t89/1O/w1cDnyilFU=";
+            AccessTokenForSupport = "4bw1smnE8oLXGQg09XJRhq9H4xHh9w1207hwUxq5q1l";
         }
         public LineApiController(string ChannelName)
         {
             func = new Functional();
             richMenu = new LineMessageTemplate.RichMenuResponse();
-            ChannelAccessToken = "q281ubFyT1L3Z1gAyrcLdLY4mHv2hXJFqAb/MEUO2OncgbgXdSsR6BDCXsrTZh0I3haZwDDaz1lrKF694gC0fTnp/CnbLma8WkiHW3UXwSf6gHxU5lNJP/IYeb1+KQRFeun9E5jJT8qx9lpQpY1S9AdB04t89/1O/w1cDnyilFU=";
+            // ChannelAccessToken = "q281ubFyT1L3Z1gAyrcLdLY4mHv2hXJFqAb/MEUO2OncgbgXdSsR6BDCXsrTZh0I3haZwDDaz1lrKF694gC0fTnp/CnbLma8WkiHW3UXwSf6gHxU5lNJP/IYeb1+KQRFeun9E5jJT8qx9lpQpY1S9AdB04t89/1O/w1cDnyilFU=";
+            ChannelAccessToken = "Pq+kySWPUtbt1YvcDtMHXkbUIrN7CDqzx18DAPS4Ij153mb+1id7NNKp7m3c74Fg5h54zPR1kFraEGm8JC31540oCiUPSwgK3SiKsYd9+nftcztMkFRg2u0PXGReejmHfKccPvNmTSwEIB63yyOvFAdB04t89/1O/w1cDnyilFU=";
+            AccessTokenForSupport = "4bw1smnE8oLXGQg09XJRhq9H4xHh9w1207hwUxq5q1l";
         }
         private static HttpClient client = new HttpClient();
         #region Call API
@@ -40,6 +47,8 @@ namespace APICore.Common
                          = new AuthenticationHeaderValue("Bearer", ChannelAccessToken);
             var response = await client.PostAsync("https://api.line.me/v2/bot/message/reply", content);
             var contents = await response.Content.ReadAsStringAsync();
+
+            
         }
         public async Task CallApi(object data)
         {
@@ -128,6 +137,23 @@ namespace APICore.Common
             }
 
         }
+
+        public async Task MessageToGroupSupport(string message)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://notify-api.line.me/api/notify");
+            var postData = string.Format("message={0}", message);
+            var data = Encoding.UTF8.GetBytes(postData);
+
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = data.Length;
+            request.Headers.Add("Authorization", "Bearer " + AccessTokenForSupport);
+
+            using (var stream = request.GetRequestStream()) stream.Write(data, 0, data.Length);
+            var response = (HttpWebResponse)request.GetResponse();
+            var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
+            
+        }
         #endregion
 
 #region Bubble
@@ -203,7 +229,7 @@ namespace APICore.Common
 
         return main;
     }
-    public dupBubbleMulticast SetBubbleMessageMultiCast(string strMessage, string appNo)
+    public dupBubbleMulticast SetBubbleMessageMultiCast(string strMessage, string appNo, string headerDefault = "แจ้งเตือนงานใหม่!", string textcolor = "#FFFFFFFF")
     {
         dupBubbleMulticast main = new dupBubbleMulticast();
         dupBubbleSubMain subMain = new dupBubbleSubMain();
@@ -217,7 +243,7 @@ namespace APICore.Common
         dupBubbleFooterContents footerContents = new dupBubbleFooterContents();
 
         subMain.type = "flex";
-        subMain.altText = "This is a Flex Message";
+        subMain.altText = headerDefault;
 
         template.type = "bubble";
         header.type = "box";
@@ -225,10 +251,10 @@ namespace APICore.Common
         header.position = "relative";
         header.backgroundColor = "#20409A";
         headerContents.type = "text";
-        headerContents.text = "แจ้งเตือนงานใหม่!";
+        headerContents.text = headerDefault;
         headerContents.weight = "bold";
         headerContents.size = "lg";
-        headerContents.color = "#FFFFFFFF";
+        headerContents.color = textcolor;
         headerContents.contents = new List<object>();
         
         header.contents.Add(headerContents);
@@ -270,6 +296,63 @@ namespace APICore.Common
         template.hero = hero;
         template.body = body;
         template.footer = footer;
+        subMain.contents = template;
+        main.messages.Add(subMain);
+
+        return main;
+    }
+    public dupBubbleMulticastNoFooter SetBubbleMessageMultiCastNoFooter(string strMessage, string appNo, string headerDefault = "แจ้งเตือนงานใหม่!", string textcolor = "#FFFFFFFF")
+    {
+        dupBubbleMulticastNoFooter main = new dupBubbleMulticastNoFooter();
+        dupBubbleSubMain subMain = new dupBubbleSubMain();
+        dupBubbleTemplate template = new dupBubbleTemplate();
+        dupBubbleHeader header = new dupBubbleHeader();
+        dupBubbleHeaderContents headerContents = new dupBubbleHeaderContents();
+        dupBubbleHero hero = new dupBubbleHero();
+        dupBubbleBody body = new dupBubbleBody();
+        dupBubbleContents contents = new dupBubbleContents();
+        dupBubbleFooterContents footerContents = new dupBubbleFooterContents();
+
+        subMain.type = "flex";
+        subMain.altText = headerDefault;
+
+        template.type = "bubble";
+        header.type = "box";
+        header.layout = "horizontal";
+        header.position = "relative";
+        header.backgroundColor = "#20409A";
+        headerContents.type = "text";
+        headerContents.text = headerDefault;
+        headerContents.weight = "bold";
+        headerContents.size = "lg";
+        headerContents.color = textcolor;
+        headerContents.contents = new List<object>();
+        
+        header.contents.Add(headerContents);
+
+        hero.type = "image";
+        hero.url = "https://www.nextcapital.co.th/uploads/06F1/files/b0b78757ee3181d6ce333da2a31128ec.png";
+        hero.size = "full";
+        hero.aspectRatio = "16:8";
+        hero.aspectMode = "cover";
+        hero.action.type = "uri";
+        hero.action.label = "Action";
+        hero.action.uri = "https://www.nextcapital.co.th";
+        body.type = "box";
+        body.layout = "horizontal";
+        body.spacing = "md";
+        contents.type = "text";
+        contents.text = strMessage;
+        contents.weight = "regular";
+        contents.wrap = true;
+        contents.style = "normal";
+        contents.contents = new List<object>();
+        
+        body.contents.Add(contents);
+
+        template.header = header;
+        template.hero = hero;
+        template.body = body;
         subMain.contents = template;
         main.messages.Add(subMain);
 

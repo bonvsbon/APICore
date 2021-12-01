@@ -91,18 +91,6 @@ namespace APICore.Models
     {
         dt = new DataTable();
         string result = "";
-        Task<UserProfile> profile;
-        profile = api.GetUserProfile(request.UserId);
-        if(profile.Result != null)
-        {
-            action.SP_InsertUserFollow(
-                request.UserId,
-                profile.Result.displayName,
-                profile.Result.pictureUrl,
-                profile.Result.statusMessage,
-                profile.Result.language
-            );
-        }
         statement = new Statement();
         statement.AppendStatement("EXEC REST_AccountRegister @UserId, @IDCard, @BirthDay, @OTP");
         statement.AppendParameter("@UserId", request.UserId);
@@ -156,12 +144,21 @@ namespace APICore.Models
         return dt;
     } 
 
-    public async Task<DataTable> CheckExistingRegister(string IDCard)
+    public async Task<DataTable> CheckExistingRegister(string IDCard, string LineUserId = "")
     {
         statement = new Statement();
         dt = new DataTable();
-        statement.AppendStatement("EXEC REST_CheckExistingRegister @IDCard");
-        statement.AppendParameter("@IDCard", IDCard);
+        if(string.IsNullOrEmpty(LineUserId))
+        {
+            statement.AppendStatement("EXEC REST_CheckExistingRegister @IDCard");
+            statement.AppendParameter("@IDCard", IDCard);
+        }
+        else
+        {
+            statement.AppendStatement("EXEC REST_CheckExistingRegister @IDCard, @UserLineId");
+            statement.AppendParameter("@IDCard", IDCard);
+            statement.AppendParameter("@UserLineId", LineUserId);
+        }
 
         dt = resAccess.ExecuteDataTable(statement);
 
@@ -169,7 +166,7 @@ namespace APICore.Models
     }
 
     #region Services
-        static async void CallAPI(string CallURL)
+        public async void CallAPI(string CallURL)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
             string result = "";

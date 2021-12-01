@@ -50,7 +50,7 @@ namespace APICore.Controllers
             if(dt.Rows.Count > 0)
             {
                 strmessage = template.AcceptTaskMessage();
-                strmessage = string.Format(strmessage, dt.Rows[0]["User_Name"].ToString(), dt.Rows[0]["Application_No"].ToString(), dt.Rows[0]["Application_DealerName"].ToString());
+                strmessage = string.Format(strmessage, dt.Rows[0]["User_Name"].ToString(), dt.Rows[0]["Application_No"].ToString(), dt.Rows[0]["Application_DealerName"].ToString(), dt.Rows[0]["User_PhoneNumber"].ToString());
                 message = api.SetMessage(strmessage);
                 response.to = dt.Rows[0]["Application_CreateBy"].ToString();
                 response.messages.Add(message);

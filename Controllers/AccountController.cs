@@ -27,9 +27,14 @@ namespace APICore.Controllers
     public class AccountController : ControllerBase
     {
         Functional func;
-        AccountModel acc;
         DataTable dt;
+        AccountModel acc;
         CustomerModel cus;
+        List<NoticeDue> due;
+        List<NoticePayment> payment;
+        Task<UserProfile> profile;
+        LineApiController api;
+        LineActionModel action; 
         List<CustomerData> data;
         public AccountController(IOptions<StateConfigs> configs)
         {
@@ -37,6 +42,8 @@ namespace APICore.Controllers
             acc = new AccountModel(configs);
             dt = new DataTable();
             cus = new CustomerModel(configs);
+            api = new LineApiController();
+            action = new LineActionModel(configs);
         }
 
         [Authorize]
@@ -112,9 +119,26 @@ namespace APICore.Controllers
                 {
                     Dictionary<string, string> response = new Dictionary<string, string>();
                     response.Add("result", "OTP Mismatch");
-                    return NotFound();
+                    return NotFound(response);
+                }
+                else if (result == "OTP Expire")
+                {
+                    Dictionary<string, string> response = new Dictionary<string, string>();
+                    response.Add("result", result);
+                    return NotFound(response);
                 }
                 data = cus.REST_GetAccountInformation(request.IDCard, request.BirthDay, "");
+                profile = api.GetUserProfile(request.UserId);
+                if(profile.Result != null)
+                {
+                    action.SP_InsertUserFollow(
+                        request.UserId,
+                        profile.Result.displayName,
+                        profile.Result.pictureUrl,
+                        profile.Result.statusMessage,
+                        profile.Result.language
+                    );
+                }
                 return Ok(data);
             } 
             catch (Exception e)
@@ -156,6 +180,17 @@ namespace APICore.Controllers
                 {
                     return NotFound(data);
                 }
+                // profile = api.GetUserProfile(request.UserId);
+                // if(profile.Result != null)
+                // {
+                //     action.SP_InsertUserFollow(
+                //         request.UserId,
+                //         profile.Result.displayName,
+                //         profile.Result.pictureUrl,
+                //         profile.Result.statusMessage,
+                //         profile.Result.language
+                //     );
+                // }
                 // result = data[0];
                 return Ok(data);
             } 
@@ -221,6 +256,7 @@ namespace APICore.Controllers
         {
             acc.REST_KeepLogRequest("", func.JsonSerialize(request));
             string paymentFormat = "|010756300005301|{0}||{1}";
+            string paymentFormatUI = "|010756300005301  {0}  {1}";
             string barcodePath = "barcode_{0}.png";
             string qrcodePath = "qrcode_{0}.png";
             byte[] bArray;
@@ -254,6 +290,7 @@ namespace APICore.Controllers
             response.Prefix = dt.Rows[0]["Prefix"].ToString();
             response.FirstName = dt.Rows[0]["FirstName"].ToString();
             response.LastName = dt.Rows[0]["LastName"].ToString();
+            response.refCardDisplay = string.Format(paymentFormatUI, dt.Rows[0]["NextCard"].ToString(), dt.Rows[0]["Installment"].ToString());
 
             return Ok(response);
             }
@@ -263,6 +300,26 @@ namespace APICore.Controllers
                 return BadRequest(e.Message);
             }
             
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> NoticeDue()
+        {
+            due = new List<NoticeDue>();
+            due = cus.REST_NoticeDue();
+            acc.REST_KeepLogRequest("Return", func.JsonSerialize(due));
+            return Ok(due);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> NoticePayment()
+        {
+            payment = new List<NoticePayment>();
+            payment = cus.REST_NoticePayment();
+            acc.REST_KeepLogRequest("Return", func.JsonSerialize(payment));
+            return Ok(payment);
         }
 
     }

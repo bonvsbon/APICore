@@ -49,7 +49,7 @@ namespace APICore.Common
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var accountId = jwtToken.Claims.First(x => x.Type == "nameid").Value;
 
-                context.Items["nameid"] = accountId;
+                context.Items.Add("nameid", accountId);
             }
             catch (Exception e)
             {

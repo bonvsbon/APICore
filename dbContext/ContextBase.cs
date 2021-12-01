@@ -45,7 +45,7 @@ namespace APICore.dbContext
         }
         public string BaseConnectionString()
         {
-            if (bool.Parse(_state.ConnectionStrings.isProd))
+            if (_state.ConnectionStrings.isProd == "1")
             {
                 return _state.ConnectionStrings.prod;
             }
@@ -165,9 +165,11 @@ namespace APICore.dbContext
                     _adapter = new SqlDataAdapter(_command);
                     _adapter.Fill(dt);
                     _dal._SqlDb.Close();
+                    KeepLogDataBase("", sql.GetStatement());
                 }
                 catch (Exception e)
                 {
+                    KeepLogDataBase(e.Message, sql.GetStatement());
                     _func.SerializeObject(dt, StatusHttp.InternalError, e.Message);
                 }
                 finally
@@ -184,6 +186,22 @@ namespace APICore.dbContext
 
                 return dt;
             }
+
+            public void KeepLogDataBase(string error, string json = "")
+            {
+                Statement sql = new Statement();
+                sql.AppendStatement("EXEC REST_KeepLogRequest @error, @json");
+                sql.AppendParameter("@error", error);
+                sql.AppendParameter("@json", json);
+                _dal._SqlDb.Open();
+                _command = new SqlCommand(sql.GetStatement(), _dal._SqlDb);
+                AddParameter(sql);
+                _adapter = new SqlDataAdapter(_command);
+                _adapter.Fill(dt);
+                _dal._SqlDb.Close();
+                
+            }
+
             public string ExecutenonResult(Statement sql)
             {
                 string result = "";

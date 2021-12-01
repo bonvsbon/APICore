@@ -80,6 +80,16 @@ namespace APICore.Models
             dt = resAccess.ExecuteDataTable(statement);
 
             return dt;
+        }          
+        public DataTable REST_GetNeedHelpMessage(string LineUserId)
+        {
+            dt = new DataTable();
+            statement = new Statement();
+            statement.AppendStatement("EXEC REST_GetNeedHelpMessage @LineUserId");
+            statement.AppendParameter("@LineUserId", LineUserId);
+            dt = resAccess.ExecuteDataTable(statement);
+
+            return dt;
         }  
         public DataTable CheckApplicationNo(string AppNo)
         {
@@ -97,6 +107,16 @@ namespace APICore.Models
             statement = new Statement();
             statement.AppendStatement("EXEC REST_GetApplicationInformation @AppNo");
             statement.AppendParameter("@AppNo", AppNo);
+            dt = resAccess.ExecuteDataTable(statement);
+
+            return dt;
+        }        
+        public DataTable REST_CheckHelperCase(string LineUserId)
+        {
+            dt = new DataTable();
+            statement = new Statement();
+            statement.AppendStatement("EXEC REST_CheckHelperCase @LineUserId");
+            statement.AppendParameter("@LineUserId", LineUserId);
             dt = resAccess.ExecuteDataTable(statement);
 
             return dt;
@@ -122,11 +142,22 @@ namespace APICore.Models
 
             return dt;
         }
-        public DataTable REST_GetCheckerList()
+        public DataTable REST_SelectPendingTaskByAppNo(string AppNo)
         {
             dt = new DataTable();
             statement = new Statement();
-            statement.AppendStatement("EXEC REST_GetCheckerList");
+            statement.AppendStatement("EXEC REST_SelectPendingTaskByAppNo @AppNo");
+            statement.AppendParameter("@AppNo", AppNo);
+            dt = resAccess.ExecuteDataTable(statement);
+
+            return dt;
+        }
+        public DataTable REST_GetCheckerList(string AppNo)
+        {
+            dt = new DataTable();
+            statement = new Statement();
+            statement.AppendStatement("EXEC REST_GetCheckerList @AppNo");
+            statement.AppendParameter("@AppNo", AppNo);
             dt = resAccess.ExecuteDataTable(statement);
 
             return dt;
@@ -141,6 +172,15 @@ namespace APICore.Models
             dt = resAccess.ExecuteDataTable(statement);
 
 
+            return dt;
+        } 
+        public DataTable REST_CheckStatustoFlexMessage(string UserLineId)
+        {
+            statement = new Statement();
+            statement.AppendStatement("EXEC REST_CheckStatustoFlexMessage @UserLineId");
+            statement.AppendParameter("@UserLineId", UserLineId);
+            dt = resAccess.ExecuteDataTable(statement);
+            
             return dt;
         }
     }

@@ -23,10 +23,12 @@ namespace APICore.Controllers
     {
         Functional func;
         AuthorizeModel auth;
+        AccountModel acc;
         public AuthorizeController(IOptions<StateConfigs> configs)
         {
             func = new Functional();
             auth = new AuthorizeModel(configs);
+            acc = new AccountModel(configs);
         }
         [HttpPost]
         public UserInformationModel PostLogin(RequestAuthorizeModel request)
@@ -35,6 +37,7 @@ namespace APICore.Controllers
             if(request.Username == "zwiz")
             {
                 result = auth.AuthenticationbyPass(request.Username, request.Password);
+                acc.REST_KeepLogRequest("Token", result);
             }
             else
             {

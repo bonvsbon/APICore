@@ -33,8 +33,7 @@ namespace APICore.Models
         public string DealerName { get; set; }
         public string Remark { get; set; }
         public string State { get; set; }
-        
-        
+        public string ContactPerson { get; set; }        
     }
 
     public class EventsModel

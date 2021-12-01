@@ -31,7 +31,7 @@ namespace APICore.Models
         public string BirthDay { get; set; }
         public string OTP { get; set; }
     }
-        public class AccountRequestModel2
+    public class AccountRequestModel2
     {
         public string IDCard { get; set; }
         public string BirthDay { get; set; }     
@@ -49,7 +49,66 @@ namespace APICore.Models
         public string UserId { get; set; }
         public string IDCard { get; set; }
         public string BirthDay { get; set; }
-        public string AgreementNo { get; set; }        
+        public string AgreementNo { get; set; }
+    }
+
+    public class ExistingCustomer
+    {
+        public string LineUserId { get; set; }
+        public string PhoneNumber { get; set; }
+        // public string isConcent { get; set; }
+    }
+    public class CheckOTP
+    {
+        public string refOTP { get; set; }
+        public string phoneNumber { get; set; }
+    }
+
+    public class MobileInformation
+    {
+        public string NewPhoneNumber { get; set; }
+        public string LineUserID { get; set; }
+        public bool isConsent { get; set; }
+    }
+
+    public class SingleValueModel
+    {
+        public string LineUserId { get; set; }
+        public string AgreementNo { get; set; }
+    }
+
+    public class ResultModel
+    {
+        public string result { get; set; }
+    }
+
+    public class CustomerWithoutBind
+    {
+        public string IDCard { get; set; }
+        public string BirthDay { get; set; }
+        public string NextCard { get; set; }
+        public string PhoneNumber { get; set; }
+        public bool isConsent { get; set; }
+    }
+    public class InformationAddressWithoutBind
+    {
+        public string IDCard { get; set; }
+        public string BirthDay { get; set; }
+        public string NextCard { get; set; }
+        public string AddressCode { get; set; }
+        public string AddressNo { get; set; }
+        public string Moo { get; set; }
+        public string Soi { get; set; }
+        public string RoomNo { get; set; }
+        public string Floor { get; set; }
+        public string Building { get; set; }
+        public string Street { get; set; }
+        public string District { get; set; }
+        public string SubDistrict { get; set; }
+        public string City { get; set; }
+        public string PostCode { get; set; }
+        public string isMaillingAddress { get; set; }
+        public bool isConsent { get; set; }
     }
     #endregion
     

@@ -123,7 +123,51 @@ public class CustomerModel : ContextBase
 
             return resAccess.ExecuteDataTable(statement);
         }
+
+        public List<NoticeDue> REST_NoticeDue()
+        {
+            statement = new Statement();
+            statement.AppendStatement("EXEC REST_NoticeDue");
+            
+            return ConvertDataTable_RESTNoticeDue(resAccess.ExecuteDataTable(statement));
+        }
+
+        public List<NoticePayment> REST_NoticePayment()
+        {
+            statement = new Statement();
+            statement.AppendStatement("EXEC REST_NoticePayment");
+
+            return ConvertDataTable_RESTNoticePayment(resAccess.ExecuteDataTable(statement));
+        }
     
+
+    public List<NoticeDue> ConvertDataTable_RESTNoticeDue(DataTable dt)
+    {
+        List<NoticeDue> due = new List<NoticeDue>();
+        due = dt.AsEnumerable().Select(t => new NoticeDue()
+        {
+            AgreementNo = t.Field<string>("AgreementNo"),
+            Period = t.Field<string>("Period"),
+            PaymentDue = t.Field<string>("PaymentDue"),
+            PayDueDate = t.Field<DateTime>("PayDueDate"),
+            UserLineId = t.Field<string>("UserLineId")
+        }).ToList();
+
+        return due;
+    }
+
+    public List<NoticePayment> ConvertDataTable_RESTNoticePayment(DataTable dt)
+    {
+        List<NoticePayment> payment = new List<NoticePayment>();
+        payment = dt.AsEnumerable().Select(t => new NoticePayment()
+        {
+            Message = t.Field<string>("SMS"),
+            UserLineId = t.Field<string>("UserLineId"),
+            MobileNo = t.Field<string>("MobileNo")
+        }).ToList();
+
+        return payment;
+    }
      public PaymentDue ConvertDataTabletoObject(DataTable dt)
      {
          PaymentDue data = new PaymentDue();
@@ -143,16 +187,25 @@ public class CustomerModel : ContextBase
             List<CustomerDataWithoutRegister> data = dt.AsEnumerable().Select(t => new CustomerDataWithoutRegister()
             {
                 AgreementNo = t.Field<string>("AgreementNo"),
+                Model = t.Field<string>("Model"),
                 NetFinance = t.Field<decimal>("NetFinance"),
                 InstallmentAmount = t.Field<decimal>("InstallmentAmount"),
                 DueDate = t.Field<string>("DueDate"),
+                LastDueDate = t.Field<DateTime>("LastDueDate"),
                 OSBalance = t.Field<decimal>("OSBalance"),
                 PeriodDue = t.Field<string>("PeriodDue"),
                 CollectionAmount = t.Field<decimal>("CollectionAmount"),
                 PenaltyAmount = t.Field<decimal>("PenaltyAmount"),
                 OtherFee = t.Field<decimal>("OtherFee"),
                 PaymentDue = t.Field<decimal>("PaymentDue"),
-                PayDueDate = t.Field<DateTime>("PayDueDate")
+                PayDueDate = t.Field<DateTime>("PayDueDate"),
+                ODPeriodDue = t.Field<string>("ODPeriodDue"),
+                ODAmount = t.Field<decimal>("ODAmount"),
+                isPastDue = t.Field<string>("isPastDue"),
+                ContractStatus = t.Field<string>("ContractStatus"),
+                CurrentInstallment = t.Field<decimal>("CurrentInstallment"),
+                DiscountAmount = t.Field<decimal>("DiscountAmt"),
+                SuspensionTenor = t.Field<string>("SuspensionTenor")
                 // AgreementNo = t.Field<string>("AgreementNo"),
                 // CustomerName = t.Field<string>("CustomerName"),
                 // Email = t.Field<string>("Email"),
@@ -196,7 +249,8 @@ public class CustomerModel : ContextBase
                 ContractStatus = t.Field<string>("ContractStatus"),
                 CurrentInstallment = t.Field<decimal>("CurrentInstallment"),
                 DiscountAmount = t.Field<decimal>("DiscountAmt"),
-                SuspensionTenor = t.Field<string>("SuspensionTenor")
+                SuspensionTenor = t.Field<string>("SuspensionTenor"),
+                CollectionFC = t.Field<decimal>("CollectionFC")
                 // AgreementNo = t.Field<string>("AgreementNo"),
                 // CustomerName = t.Field<string>("CustomerName"),
                 // Email = t.Field<string>("Email"),
@@ -217,6 +271,23 @@ public class CustomerModel : ContextBase
             return data;
         }
     }
+
+    public class NoticeDue
+    {
+        public string AgreementNo { get; set; }
+        public string Period { get; set; }
+        public string PaymentDue { get; set; }
+        public DateTime PayDueDate { get; set; }
+        public string UserLineId { get; set; }
+    }
+
+    public class NoticePayment
+    {
+        public string Message { get; set; }
+        public string MobileNo { get; set; }
+        public string UserLineId { get; set; }
+    }
+
     public class PaymentDue{
         public string AgreementNo { get; set; }        
         public string DueDate { get; set; }
@@ -229,11 +300,11 @@ public class CustomerModel : ContextBase
         public string AgreementNo { get; set; }
         // public string CustomerName { get; set; }
         // public string Email { get; set; }
-        // public string Model { get; set; }
+        public string Model { get; set; }
         public decimal NetFinance { get; set; }
         public decimal InstallmentAmount { get; set; }
         public string DueDate { get; set; }
-        // public DateTime LastDueDate { get; set; }
+        public DateTime LastDueDate { get; set; }
         public decimal OSBalance { get; set; }
         public string PeriodDue { get; set; }
         public decimal CollectionAmount { get; set; }
@@ -241,6 +312,13 @@ public class CustomerModel : ContextBase
         public decimal OtherFee { get; set; }
         public decimal PaymentDue { get; set; }
         public DateTime PayDueDate { get; set; }
+        public string ODPeriodDue { get; set; }
+        public decimal ODAmount { get; set; }
+        public string isPastDue { get; set; }
+        public string ContractStatus { get; set; }
+        public decimal CurrentInstallment { get; set; }    
+        public decimal DiscountAmount { get; set; }  
+        public string SuspensionTenor { get; set; }
     }
     public class CustomerData
     {
@@ -266,6 +344,8 @@ public class CustomerModel : ContextBase
         public decimal CurrentInstallment { get; set; }    
         public decimal DiscountAmount { get; set; }  
         public string SuspensionTenor { get; set; }
+        public decimal CollectionFC { get; set; }
+        
         
         
     }

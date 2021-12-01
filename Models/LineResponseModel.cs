@@ -128,6 +128,10 @@ namespace APICore.Models
         public List<string> to = new List<string>();
         public List<dupBubbleSubMain> messages = new List<dupBubbleSubMain>();
     }
+    public class dupBubbleMulticastNoFooter {
+        public List<string> to = new List<string>();
+        public List<dupBubbleSubMain> messages = new List<dupBubbleSubMain>();
+    }
     public class BubbleSubMain {
         public string type { get; set; }
         public string altText { get; set; }
@@ -136,7 +140,7 @@ namespace APICore.Models
     public class dupBubbleSubMain {
         public string type { get; set; }
         public string altText { get; set; }
-        public dupBubbleTemplate contents = new dupBubbleTemplate();
+        public object contents = new object();
     }
     public class BubbleTemplate {
         public string type { get; set; }
@@ -151,6 +155,13 @@ namespace APICore.Models
         public dupBubbleHero hero { get; set; } // class
         public dupBubbleBody body { get; set; } // class
         public dupBubbleFooter footer { get; set; } // class
+    }
+    public class dupBubbleTemplateNoFooter 
+    {
+        public string type { get; set; }
+        public dupBubbleHeader header { get; set; } // class
+        public dupBubbleHero hero { get; set; } // class
+        public dupBubbleBody body { get; set; } // class
     }
     public class BubbleHeader {
         public string type { get; set; }
