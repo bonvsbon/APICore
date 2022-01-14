@@ -289,7 +289,7 @@ namespace APICore.Controllers
             acc.REST_KeepLogRequest("Data is Empty", func.JsonSerialize(request));
             return NotFound(result);
         }
-        msg = management.REST_UpdateMobileNotRegister(request.IDCard, request.BirthDay, request.PhoneNumber);//, request.isConsent);
+        msg = management.REST_UpdateMobileNotRegister(request.IDCard, request.BirthDay, request.PhoneNumber, request.TrackingID, request.ApprovalName);//, request.isConsent);
         result.phoneNumber = request.PhoneNumber;
         result.result = msg;
         return Ok(result);
@@ -353,7 +353,9 @@ namespace APICore.Controllers
             request.District,
             request.SubDistrict,
             request.City,
-            request.PostCode
+            request.PostCode,
+            request.TrackingID,
+            request.ApprovalName
             // ,
             // request.isConsent
         );
@@ -370,5 +372,12 @@ namespace APICore.Controllers
         return Ok(address);
     }
     #endregion
+
+    [HttpPost]
+    public async Task<IActionResult> TestConnection()
+    {
+        return Ok("Running");
+    }
+
     }
 }

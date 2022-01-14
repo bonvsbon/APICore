@@ -89,6 +89,8 @@ namespace APICore.Models
         public string NextCard { get; set; }
         public string PhoneNumber { get; set; }
         public bool isConsent { get; set; }
+        public string TrackingID { get; set; }
+        public string ApprovalName { get; set; }
     }
     public class InformationAddressWithoutBind
     {
@@ -109,6 +111,8 @@ namespace APICore.Models
         public string PostCode { get; set; }
         public string isMaillingAddress { get; set; }
         public bool isConsent { get; set; }
+        public string TrackingID { get; set; }
+        public string ApprovalName { get; set; }
     }
     #endregion
     
