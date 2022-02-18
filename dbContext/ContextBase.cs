@@ -159,8 +159,8 @@ namespace APICore.dbContext
                 try
                 {
                     dt = new DataTable();
-                    _dal._SqlDb.Open();
                     _command = new SqlCommand(sql.GetStatement(), _dal._SqlDb);
+                    _dal._SqlDb.Open();
                     AddParameter(sql);
                     _adapter = new SqlDataAdapter(_command);
                     _adapter.Fill(dt);

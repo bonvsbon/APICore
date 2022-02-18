@@ -183,5 +183,21 @@ namespace APICore.Models
             
             return dt;
         }
+
+        /* 
+            Investigate OLT 21.01.22
+        */
+        public void REST_KeepEventTransaction(string EventRequest, string EventLineUserId, string EventFunctionName, string EventResult)
+        {
+            statement = new Statement();
+            statement.AppendStatement("EXEC [REST_KeepEventTransaction] @Event_Request, @Event_FunctionName, @Event_ListLineUserId, @Event_Result");
+            statement.AppendParameter("@Event_Request", EventRequest);
+            statement.AppendParameter("@Event_ListLineUserId", EventLineUserId);
+            statement.AppendParameter("@Event_FunctionName", EventFunctionName);
+            statement.AppendParameter("@Event_Result", EventResult);
+
+            resAccess.ExecuteDataTable(statement);
+        }
+
     }
 }

@@ -206,9 +206,8 @@ Dealer : {0}
                 // hero
                 haction.type = "uri";
                 haction.label = "Action";
-                // haction.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/" + dt.Rows[i]["ActionButton"].ToString(); // **
                 haction.uri = "https://liff.line.me/1656450586-DzJv1LGJ/" + dt.Rows[i]["PageState"].ToString();// + dt.Rows[i]["ActionButton"].ToString(); // **
-                
+                // haction.uri = "https://liff.line.me/1656443050-Qg1Lgz9J/" + dt.Rows[i]["PageState"].ToString();// + dt.Rows[i]["ActionButton"].ToString(); // **
                 hero.type = "image";
                 hero.url = "https://www.nextcapital.co.th/uploads/06F1/files/"+dt.Rows[i]["imageName"].ToString(); // **
                 hero.size = "full";
@@ -240,6 +239,7 @@ Dealer : {0}
                 fcaction.label = dt.Rows[i]["footerText"].ToString(); // **
                 // fcaction.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/" + dt.Rows[i]["ActionButton"].ToString(); // **
                 fcaction.uri = "https://liff.line.me/1656450586-DzJv1LGJ/" + dt.Rows[i]["PageState"].ToString();// + dt.Rows[i]["ActionButton"].ToString(); // **
+                // fcaction.uri = "https://liff.line.me/1656443050-Qg1Lgz9J/" + dt.Rows[i]["PageState"].ToString();// + dt.Rows[i]["ActionButton"].ToString(); // **
                 fcontent.action = fcaction;
                 footer.contents.Add(fcontent);
                 bubble.footer = footer;
@@ -390,6 +390,7 @@ Dealer : {0}
             action.type = "uri";
             // action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/TaskList?EncryptionKey=" + LineUserId + "&cmd=Pending";
             action.uri = "https://liff.line.me/1656450586-DzJv1LGJ/TaskList";
+            // action.uri = "https://liff.line.me/1656443050-Qg1Lgz9J/TaskList";
             area.bounds = bound;
             area.action = action;
             // areas.Add(area);
@@ -423,6 +424,7 @@ Dealer : {0}
             action.type = "uri";
             // action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/TaskList?EncryptionKey=" + LineUserId + "&cmd=OnHand";
             action.uri = "https://liff.line.me/1656450586-DzJv1LGJ/UpdateCase";
+            // action.uri = "https://liff.line.me/1656443050-Qg1Lgz9J/UpdateCase";
             area.bounds = bound;
             area.action = action;
             // areas.Add(area);
@@ -472,6 +474,7 @@ Dealer : {0}
             action.type = "uri";
             // action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/Default?EncryptionKey="+LineUserId + "&menuId=1";
             action.uri = "https://liff.line.me/1656450586-DzJv1LGJ/CreateCase";
+            // action.uri = "https://liff.line.me/1656443050-Qg1Lgz9J/CreateCase";
             area.bounds = bound;
             area.action = action;
             rich.areas.Add(area);
@@ -487,6 +490,7 @@ Dealer : {0}
             action.type = "uri";
             // action.uri = "https://synergy.nextcapital.co.th/webtest/DACApps/UpdateStatus?EncryptionKey=" + LineUserId + "&cmd=OnHand";
             action.uri = "https://liff.line.me/1656450586-DzJv1LGJ/UpdateCase";
+            // action.uri = "https://liff.line.me/1656443050-Qg1Lgz9J/UpdateCase";
             area.bounds = bound;
             area.action = action;
             rich.areas.Add(area);

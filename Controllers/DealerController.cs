@@ -41,6 +41,7 @@ namespace APICore.Controllers
         public DealerController(IOptions<StateConfigs> config)
         {
             api = new LineApiController(ChannelName: "NextforDealer");
+            // api = new LineApiController();
             DAC = new DACModel(config);
             action = new LineActionModel(config);
             func = new Functional();
@@ -360,6 +361,7 @@ namespace APICore.Controllers
         {
             dupBubbleMulticast bubble = new dupBubbleMulticast();
             dupBubbleMulticastNoFooter nofooter = new dupBubbleMulticastNoFooter();
+            DAC.REST_KeepEventTransaction("PushMessage", func.JsonSerialize(request), "Push", "[364]");
             string strmessage = template.MessageAlertTaskList();
             // Get Data for string format
             dt = new DataTable();
@@ -387,17 +389,36 @@ namespace APICore.Controllers
                     nofooter = new dupBubbleMulticastNoFooter();
                     if(dt.Rows[i]["action"].ToString() == "NoFooter")
                     {
-                        nofooter = api.SetBubbleMessageMultiCastNoFooter(strmessage, request.AppNo);
-                        nofooter.to.Add(dt.Rows[i]["User_LineUserId"].ToString());
-                        await api.CallApiMultiCast(nofooter);
+                        try
+                        {
+                            nofooter = api.SetBubbleMessageMultiCastNoFooter(strmessage, request.AppNo);
+                            nofooter.to.Add(dt.Rows[i]["User_LineUserId"].ToString());
+                            await api.CallApiMultiCast(nofooter);
+                            DAC.REST_KeepEventTransaction("PushMessage : NoFooter", func.JsonSerialize(nofooter.to), "Push", "[395]");
+                        } 
+                        catch(Exception e)
+                        {
+                            DAC.REST_KeepEventTransaction("PushMessage : NoFooter", func.JsonSerialize(nofooter.to), "Push", e.StackTrace);
+                        }
                     }
                     else
                     {
-                        bubble = api.SetBubbleMessageMultiCast(strmessage, request.AppNo);
-                        bubble.to.Add(dt.Rows[i]["User_LineUserId"].ToString());
-                        await api.CallApiMultiCast(bubble);
+                        try
+                        {
+                            bubble = api.SetBubbleMessageMultiCast(strmessage, request.AppNo);
+                            bubble.to.Add(dt.Rows[i]["User_LineUserId"].ToString());
+                            await api.CallApiMultiCast(bubble);
+                            DAC.REST_KeepEventTransaction("PushMessage : haveFooter", func.JsonSerialize(bubble.to), "Push", "[409]");
+                        } 
+                        catch(Exception e)
+                        {
+                            DAC.REST_KeepEventTransaction("PushMessage : haveFooter", func.JsonSerialize(bubble.to), "Push", e.StackTrace);
+                        }
+                        
                     }
                 }
+                
+
             }
                         
 
@@ -411,6 +432,9 @@ namespace APICore.Controllers
             MessageResponseModel message = new MessageResponseModel();
             LineMessageTemplate template = new LineMessageTemplate();
             dt = new DataTable();
+            
+            DAC.REST_KeepEventTransaction("NoticeTracking", func.JsonSerialize(request), "NoticeTracking", "[436]");
+
             string msg = template.MessageNotice(request.State, request);
             string statecancel;
             message.type = "text";
@@ -430,15 +454,26 @@ namespace APICore.Controllers
             }
 
             dt = DAC.REST_GetUserforNotice(request.ApplicationNo, request.State);
-            if(dt.Rows.Count > 0)
+            try
             {
-                for(int i = 0; i < dt.Rows.Count; i++)
+                if(dt.Rows.Count > 0)
                 {
-                    response.to.Add(dt.Rows[i]["Receiver"].ToString());
-                }   
+                    for(int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        response.to.Add(dt.Rows[i]["Receiver"].ToString());
+                    }   
+                    await api.CallApiMultiCast(response);
+                    DAC.REST_KeepEventTransaction("NoticeTracking", func.JsonSerialize(response.to), "DealerController -> CallApiMultiCast", "[461]");
+                }
+                else
+                {
+                    DAC.REST_KeepEventTransaction("NoticeTracking", request.ApplicationNo, "DealerController -> REST_GetUserforNotice is Empty", "REST_UpdateStatusApp " + request.ApplicationNo + ", " + request.State);
+                }
             }
-            await api.CallApiMultiCast(response);
-
+            catch (Exception e) 
+            {
+                DAC.REST_KeepEventTransaction("NoticeTracking", request.ApplicationNo, "DealerController", e.StackTrace);
+            }
             return Ok();
         }
 
@@ -449,28 +484,53 @@ namespace APICore.Controllers
             MessageResponseModel message = new MessageResponseModel();
             LineMessageTemplate template = new LineMessageTemplate();
             dt = new DataTable();
+            DAC.REST_KeepEventTransaction("CheckerAcceptTask", func.JsonSerialize(request), "CheckerAcceptTask", "[487]");
             dt = DAC.CheckApplicationNo(request.AppNo);
             if(dt.Rows.Count > 0)
             {
                 dtifExists = new DataTable();
                 dtifExists = DAC.REST_CheckAceptTaskExisting(request.AppNo);
-                if(dtifExists.Rows.Count > 0)
+                try
                 {
-                    if(!string.IsNullOrEmpty(dtifExists.Rows[0]["Application_Responsibility"].ToString()))
+                    if(dtifExists.Rows.Count > 0)
                     {
-                        message = api.SetMessage("ไม่สามารถทำรายการได้เนื่องจากมีคนกดรับงานไปแล้ว");
+                        if(!string.IsNullOrEmpty(dtifExists.Rows[0]["Application_Responsibility"].ToString()))
+                        {
+                            message = api.SetMessage("ไม่สามารถทำรายการได้เนื่องจากมีคนกดรับงานไปแล้ว");
+                            response.to = request.LineUserId;
+                            response.messages.Add(message);   
+                            await api.CallApi(response);
+                            DAC.REST_KeepEventTransaction("CheckerAcceptTask", response.to, "DealerController -> CallApi", "[496]");
+                            return Ok();    
+                        }
+                    }
+                    else
+                    {
+                        DAC.REST_KeepEventTransaction("CheckerAcceptTask", request.AppNo, "DealerController -> REST_CheckAceptTaskExisting is Empty", "REST_CheckAceptTaskExisting " + request.AppNo);
+                    }
+                    try
+                    {
+                        checker.AcceptTask(request.LineUserId, request.AppNo);
+                        message = api.SetMessage("บันทึกข้อมูลสำเร็จ");
                         response.to = request.LineUserId;
                         response.messages.Add(message);   
                         await api.CallApi(response);
-                        return Ok();    
+                        DAC.REST_KeepEventTransaction("CheckerAcceptTask", response.to, "DealerController -> CallApi", "[511]");
+                    }
+                    catch (Exception e)
+                    {
+                        DAC.REST_KeepEventTransaction("CheckerAcceptTask", request.AppNo, "DealerController -> AcceptTask", e.StackTrace);
                     }
                 }
-                checker.AcceptTask(request.LineUserId, request.AppNo);
-                message = api.SetMessage("บันทึกข้อมูลสำเร็จ");
-                response.to = request.LineUserId;
-                response.messages.Add(message);   
-                await api.CallApi(response);
+                catch (Exception e)
+                {
+                    DAC.REST_KeepEventTransaction("CheckerAcceptTask", request.AppNo, "DealerController -> REST_CheckApplicationNo", e.StackTrace);
+                }
                 return Ok();
+            }
+            else
+            {
+                DAC.REST_KeepEventTransaction("CheckerAcceptTask", request.AppNo, "DealerController -> REST_CheckApplicationNo is Empty", "REST_CheckApplicationNo " + request.AppNo);
             }
 
             return Ok();
@@ -482,6 +542,7 @@ namespace APICore.Controllers
             dupBubbleMulticast bubble = new dupBubbleMulticast();
             dupBubbleMulticastNoFooter nofooter = new dupBubbleMulticastNoFooter();
             DataTable dtAppInfo;
+            DAC.REST_KeepEventTransaction("PushMessageOnTaskOverTime", func.JsonSerialize(requests), "PushMessageOnTaskOverTime", "[545]");
             if(requests.Count > 0)
             {
                 foreach(ExternalRequest ex in requests)
@@ -507,28 +568,65 @@ namespace APICore.Controllers
                                 dtAppInfo.Rows[0]["Application_PhoneNumber"].ToString()
                             );
                         }
+                        else
+                        {
+                            DAC.REST_KeepEventTransaction("PushMessageOnTaskOverTime", ex.AppNo, "DealerController -> REST_GetApplicationInformation is Empty", "REST_GetApplicationInformation " + ex.AppNo);
+                        }
 
                         foreach(DataRow row in dt.Rows)
                         {
-                            if(row["action"].ToString() == "NoFooter")
+                            try
                             {
-                                nofooter = api.SetBubbleMessageMultiCastNoFooter(strmessage, ex.AppNo, "แจ้งเตือนไม่มีผู้รับงาน", "#fdb813");
-                                nofooter.to.Add(row["User_LineUserId"].ToString());
-                                await api.CallApiMultiCast(nofooter);
+                                if(row["action"].ToString() == "NoFooter")
+                                {
+                                    nofooter = api.SetBubbleMessageMultiCastNoFooter(strmessage, ex.AppNo, "แจ้งเตือนไม่มีผู้รับงาน", "#fdb813");
+                                    nofooter.to.Add(row["User_LineUserId"].ToString());
+                                    await api.CallApiMultiCast(nofooter);
+                                    DAC.REST_KeepEventTransaction("PushMessageOnTaskOverTime : State is " + row["action"].ToString(), func.JsonSerialize(nofooter), "DealerController -> CallApiMultiCast", "[578]");
+                                }
+                                else
+                                {
+                                    bubble = api.SetBubbleMessageMultiCast(strmessage, ex.AppNo, "แจ้งเตือนไม่มีผู้รับงาน", "#fdb813");
+                                    bubble.to.Add(row["User_LineUserId"].ToString());
+                                    await api.CallApiMultiCast(bubble);
+                                    DAC.REST_KeepEventTransaction("PushMessageOnTaskOverTime : State is " + row["action"].ToString(), func.JsonSerialize(bubble), "DealerController -> CallApiMultiCast", "[585]");
+                                }
                             }
-                            else
+                            catch (Exception e)
                             {
-                                bubble = api.SetBubbleMessageMultiCast(strmessage, ex.AppNo, "แจ้งเตือนไม่มีผู้รับงาน", "#fdb813");
-                                bubble.to.Add(row["User_LineUserId"].ToString());
-                                await api.CallApiMultiCast(bubble);
+                                if(row["action"].ToString() == "NoFooter")
+                                {
+                                    DAC.REST_KeepEventTransaction("PushMessageOnTaskOverTime", func.JsonSerialize(nofooter), "DealerController -> CallApiMultiCast", e.StackTrace);
+                                }
+                                else
+                                {
+                                    DAC.REST_KeepEventTransaction("PushMessageOnTaskOverTime", func.JsonSerialize(bubble), "DealerController -> CallApiMultiCast", e.StackTrace);
+                                }
                             }
                         }
                     }
+                    else
+                    {
+                        DAC.REST_KeepEventTransaction("PushMessageOnTaskOverTime", ex.AppNo, "DealerController -> REST_SelectPendingTaskByAppNo is Empty", "REST_SelectPendingTaskByAppNo " + ex.AppNo);
+                    }
                 }
+            }
+            else
+            {
+                DAC.REST_KeepEventTransaction("PushMessageOnTaskOverTime", requests.Count.ToString(), "DealerController -> ExternalRequest is Empty", "PushMessageOnTaskOverTime");
             }
 
             return Ok();
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ServiceWorking()
+        {
+            return Ok("Working");
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> TestNotice(ExternalRequest request)
         {

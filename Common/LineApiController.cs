@@ -11,6 +11,11 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
 using System.Drawing;
+using System.Data;
+using System.Data.OleDb;
+using System.Data.SqlClient;
+using APICore.Models;
+
 
 namespace APICore.Common
 {
@@ -20,23 +25,65 @@ namespace APICore.Common
         LineActionModel action;
         string ChannelAccessToken = "";
         string AccessTokenForSupport = "";
+        string Sqlstr = "";
         LineMessageTemplate.RichMenuResponse richMenu;
+        EventLogModel dataEvent;
+        PushLineResponseMultiCastModel clsPushMultiCast;
+        dupBubbleMulticastNoFooter clsdupBubbleMultiCastNoFooter;
+        dupBubbleMulticast clsdupBubbleMultiCast;
+        PushLineResponseModel clsPushLineResponseModel;
+        
+        LineMessageTemplate.FlexMessageMain clsFlexMessageMain;
+
+
         public LineApiController()
         {
             func = new Functional();
             richMenu = new LineMessageTemplate.RichMenuResponse();
-            ChannelAccessToken = "RT5KbvDWjJvYECaWsjh6oVMfcTF0nKGrKr0w2RplJl0Z/uIarhvnlJ8p2zYxyHJ9fjCL1k/KFzh1xMrYY9wLJktxYeM4S8JnxQ/MDdaSeJM7UGLlZfQpOIFnCNe84g3N8T0QEdk7mJTWQMggOCj9fAdB04t89/1O/w1cDnyilFU=";
+            ChannelAccessToken = "q281ubFyT1L3Z1gAyrcLdLY4mHv2hXJFqAb/MEUO2OncgbgXdSsR6BDCXsrTZh0I3haZwDDaz1lrKF694gC0fTnp/CnbLma8WkiHW3UXwSf6gHxU5lNJP/IYeb1+KQRFeun9E5jJT8qx9lpQpY1S9AdB04t89/1O/w1cDnyilFU=";
             AccessTokenForSupport = "4bw1smnE8oLXGQg09XJRhq9H4xHh9w1207hwUxq5q1l";
+            clsPushMultiCast = new PushLineResponseMultiCastModel();
+            clsdupBubbleMultiCast = new dupBubbleMulticast();
+            clsdupBubbleMultiCastNoFooter = new dupBubbleMulticastNoFooter();
+            dataEvent = new EventLogModel();
         }
         public LineApiController(string ChannelName)
         {
             func = new Functional();
             richMenu = new LineMessageTemplate.RichMenuResponse();
-            // ChannelAccessToken = "q281ubFyT1L3Z1gAyrcLdLY4mHv2hXJFqAb/MEUO2OncgbgXdSsR6BDCXsrTZh0I3haZwDDaz1lrKF694gC0fTnp/CnbLma8WkiHW3UXwSf6gHxU5lNJP/IYeb1+KQRFeun9E5jJT8qx9lpQpY1S9AdB04t89/1O/w1cDnyilFU=";
-            ChannelAccessToken = "Pq+kySWPUtbt1YvcDtMHXkbUIrN7CDqzx18DAPS4Ij153mb+1id7NNKp7m3c74Fg5h54zPR1kFraEGm8JC31540oCiUPSwgK3SiKsYd9+nftcztMkFRg2u0PXGReejmHfKccPvNmTSwEIB63yyOvFAdB04t89/1O/w1cDnyilFU=";
+            ChannelAccessToken = "q281ubFyT1L3Z1gAyrcLdLY4mHv2hXJFqAb/MEUO2OncgbgXdSsR6BDCXsrTZh0I3haZwDDaz1lrKF694gC0fTnp/CnbLma8WkiHW3UXwSf6gHxU5lNJP/IYeb1+KQRFeun9E5jJT8qx9lpQpY1S9AdB04t89/1O/w1cDnyilFU=";
+            // ChannelAccessToken = "Pq+kySWPUtbt1YvcDtMHXkbUIrN7CDqzx18DAPS4Ij153mb+1id7NNKp7m3c74Fg5h54zPR1kFraEGm8JC31540oCiUPSwgK3SiKsYd9+nftcztMkFRg2u0PXGReejmHfKccPvNmTSwEIB63yyOvFAdB04t89/1O/w1cDnyilFU=";
             AccessTokenForSupport = "4bw1smnE8oLXGQg09XJRhq9H4xHh9w1207hwUxq5q1l";
+            clsPushMultiCast = new PushLineResponseMultiCastModel();
+            clsdupBubbleMultiCast = new dupBubbleMulticast();
+            clsdupBubbleMultiCastNoFooter = new dupBubbleMulticastNoFooter();
+            dataEvent = new EventLogModel();
         }
         private static HttpClient client = new HttpClient();
+
+        public void ExecuteSQL(string sqlStr)
+        {
+            // SqlConnection con = new SqlConnection(AESEncrypt.AESOperation.DecryptString("DTYGcyW6MlyZ1QyTlXPYSZL2QG3fOXW3FSk5ufW4qG0e7hYMi8v4fzEgjeDifnKnoiGsGGGyv5TakSV+dNN/YrdeJoqR1V6+drt3onyUBwX0XenMNaTnrZEvWtWVn4F++qeu6LNpfV+W4BWcCZ5vt9TBPWd0b5oTUhHD9obuTHndNoQLahaiolirQAOfV4Ff"));
+            SqlConnection con = new SqlConnection(AESEncrypt.AESOperation.DecryptString("m8C2wqD23bVcl3NA2NPa5h+whpdq9g5D2eymjLRTnKq7LdwaJmKLzHdaS/EZuLZool84v+w8Ik+f9u6A0TajuhYmq2nGsr1N1ipDWxQVncRr2P9FdWnYdLz4WwzoiFUT3pORy6AUw3ciIahX1Jl9AVtSuXIyPs7IPXn8mD4dUSeiUsv/k5r3QxVbOHHBp95n"));
+            SqlCommand cmd;
+            SqlDataAdapter adapter;
+            try
+            {
+                cmd = new SqlCommand(sqlStr, con);
+                // adapter = new SqlDataAdapter(cmd);
+                if(con.State == ConnectionState.Closed) con.Open();
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
         #region Call API
         public async Task CallApi(LineResponseModel data)
         {
@@ -52,24 +99,96 @@ namespace APICore.Common
         }
         public async Task CallApi(object data)
         {
+            clsPushLineResponseModel = new PushLineResponseModel();
+            clsFlexMessageMain = new LineMessageTemplate.FlexMessageMain();
+
             StringContent content = new StringContent(func.JsonSerialize(data),
             System.Text.Encoding.UTF8, 
             "application/json");
             client.DefaultRequestHeaders.Authorization 
                          = new AuthenticationHeaderValue("Bearer", ChannelAccessToken);
             var response = await client.PostAsync("https://api.line.me/v2/bot/message/push", content);
-            var contents = await response.Content.ReadAsStringAsync();           
+
+            try
+            {
+                var contents = await response.Content.ReadAsStringAsync();
+                // Sqlstr = "EXEC REST_KeepEventTransaction '{0}', '{1}', '{2}', '{3}' ";
+                if(data.GetType() == Type.GetType("APICore.Models.PushLineResponseModel"))
+                {
+                    clsPushLineResponseModel = (PushLineResponseModel)data;
+                    Sqlstr = "EXEC REST_KeepEventTransaction 'API : push[108]', 'CallApi', '" + clsPushLineResponseModel.to + "', '"+ contents +"' ";
+                    // Sqlstr = string.Format(Sqlstr, "API : push[108]", "CallApi", clsPushLineResponseModel.to, contents);
+                }
+                else if (data.GetType() == Type.GetType("APICore.Models.FlexMessageMain"))
+                {
+                    clsFlexMessageMain = (LineMessageTemplate.FlexMessageMain)data;
+                    Sqlstr = "EXEC REST_KeepEventTransaction 'API : push[113]', 'CallApi', '" + clsPushLineResponseModel.to + "', '"+ contents +"' ";
+                    // Sqlstr = string.Format(Sqlstr, "API : push[113]", "CallApi",clsPushLineResponseModel.to, contents);
+                }
+                // else if (data.GetType() == Type.GetType("PushLineResponseMultiCastModel"))
+                // {
+                //     clsPushMultiCast = (PushLineResponseMultiCastModel)data;
+                //     Sqlstr = string.Format(Sqlstr, "API : push", func.JsonSerialize(clsPushMultiCast.to), contents);
+                // }
+            }
+            catch (Exception e)
+            {
+                // Write Log Exception
+                ExecuteSQL("EXEC REST_KeepEventTransaction 'API : multicast[179]', 'CallApiMultiCast', '" + func.JsonSerialize(data) + "', '" + e.StackTrace + "'");
+            }
+            finally
+            {
+                // Write Log Response
+                ExecuteSQL(Sqlstr);
+            }
+
         }
 
         public async Task CallApiMultiCast(object data)
         {
+            clsPushMultiCast = new PushLineResponseMultiCastModel();
+            clsdupBubbleMultiCast = new dupBubbleMulticast();
+            clsdupBubbleMultiCastNoFooter = new dupBubbleMulticastNoFooter();
             StringContent content = new StringContent(func.JsonSerialize(data),
             System.Text.Encoding.UTF8, 
             "application/json");
             client.DefaultRequestHeaders.Authorization 
                          = new AuthenticationHeaderValue("Bearer", ChannelAccessToken);
             var response = await client.PostAsync("https://api.line.me/v2/bot/message/multicast", content);
-            var contents = await response.Content.ReadAsStringAsync();           
+
+            try
+            {
+                var contents = await response.Content.ReadAsStringAsync();
+                // Sqlstr = "EXEC REST_KeepEventTransaction '{0}', '{1}', '{2}', '{3}' ";
+                if(data.GetType() == Type.GetType("APICore.Models.dupBubbleMulticast"))
+                {
+                    clsdupBubbleMultiCast = (dupBubbleMulticast)data;
+                    Sqlstr = "EXEC REST_KeepEventTransaction 'API : multicast[153]', 'CallApiMultiCast', '" + func.JsonSerialize(clsdupBubbleMultiCast.to) + "', '"+ contents +"' ";
+                    // Sqlstr = string.Format(Sqlstr, "API : multicast[153]", "CallApiMultiCast", func.JsonSerialize(clsdupBubbleMultiCast.to), contents);
+                }
+                else if (data.GetType() == Type.GetType("APICore.Models.dupBubbleMulticastNoFooter"))
+                {
+                    clsdupBubbleMultiCastNoFooter = (dupBubbleMulticastNoFooter)data;
+                    Sqlstr = "EXEC REST_KeepEventTransaction 'API : multicast[168]', 'CallApiMultiCast', '"+ func.JsonSerialize(clsdupBubbleMultiCastNoFooter.to) +"', '"+ contents +"' ";
+                    // Sqlstr = string.Format(Sqlstr, "API : multicast[168]", "CallApiMultiCast", func.JsonSerialize(clsdupBubbleMultiCastNoFooter.to), contents);
+                }
+                else if (data.GetType() == Type.GetType("APICore.Models.PushLineResponseMultiCastModel"))
+                {
+                    clsPushMultiCast = (PushLineResponseMultiCastModel)data;
+                    Sqlstr = "EXEC REST_KeepEventTransaction 'API : multicast[173]', 'CallApiMultiCast', '"+ func.JsonSerialize(clsPushMultiCast.to) +"', '"+ contents +"' ";
+                    // Sqlstr = string.Format(Sqlstr, "API : multicast[173]", "CallApiMultiCast", func.JsonSerialize(clsPushMultiCast.to), contents);
+                }
+            }
+            catch (Exception e)
+            {
+                // Write Log Exception
+                ExecuteSQL("EXEC REST_KeepEventTransaction 'API : multicast[179]', 'CallApiMultiCast', '" + func.JsonSerialize(data) + "', '" + e.StackTrace + "'");
+            }
+            finally
+            {
+                // Write Log Response
+                ExecuteSQL(Sqlstr);
+            }
         }
 
         public async Task<UserProfile> GetUserProfile(string UserId)

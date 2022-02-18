@@ -52,15 +52,15 @@ namespace APICore.Models.DataClass
 
         }
 
-        public string REST_UpdateMobileNumber(string MobileNumber, string UserLineID)//, bool isConsent)
+        public string REST_UpdateMobileNumber(string MobileNumber, string UserLineID, bool isConsent)
         {
             string result = "";
             statement = new Statement();
             DataTable dt = new DataTable();
-            statement.AppendStatement("EXEC REST_UpdateMobile @mobile, @UserLineID");//, @isConsent");
+            statement.AppendStatement("EXEC REST_UpdateMobile @mobile, @UserLineID, @isConsent");
             statement.AppendParameter("@mobile", MobileNumber);
             statement.AppendParameter("@UserLineID", UserLineID);
-            // statement.AppendParameter("@isConsent", isConsent);
+            statement.AppendParameter("@isConsent", isConsent);
 
             dt = resAccess.ExecuteDataTable(statement);
             if(dt.Rows.Count > 0)
@@ -70,18 +70,20 @@ namespace APICore.Models.DataClass
 
             return result;
         }
-        public string REST_UpdateMobileNotRegister(string IDCard, string BirthDay, string PhoneNumber, string TrackingID, string ApprovalName)//, bool isConsent)
+        // public string REST_UpdateMobileNotRegister(string IDCard, string BirthDay, string PhoneNumber, string TrackingID, string ApprovalName, bool isConsent)
+        public string REST_UpdateMobileNotRegister(string IDCard, string BirthDay, string PhoneNumber, bool isConsent)
         {
             string result = "";
             statement = new Statement();
             DataTable dt = new DataTable();
-            statement.AppendStatement("EXEC REST_UpdateMobileNotRegister @IDCard, @BirthDay, @mobile, @TrackingID, @ApprovalName");//, @isConsent");
+            // statement.AppendStatement("EXEC REST_UpdateMobileNotRegister @IDCard, @BirthDay, @mobile, @TrackingID, @ApprovalName, @isConsent");
+            statement.AppendStatement("EXEC REST_UpdateMobileNotRegister @IDCard, @BirthDay, @mobile, @isConsent");
             statement.AppendParameter("@IDCard", IDCard);
             statement.AppendParameter("@BirthDay", BirthDay);
             statement.AppendParameter("@mobile", PhoneNumber);
-            statement.AppendParameter("@TrackingID", TrackingID);
-            statement.AppendParameter("@ApprovalName", ApprovalName);
-            // statement.AppendParameter("@isConsent", isConsent);
+            // statement.AppendParameter("@TrackingID", TrackingID);
+            // statement.AppendParameter("@ApprovalName", ApprovalName);
+            statement.AppendParameter("@isConsent", isConsent);
 
             dt = resAccess.ExecuteDataTable(statement);
             if(dt.Rows.Count > 0)
@@ -134,11 +136,11 @@ namespace APICore.Models.DataClass
             return ConvertDataTableToListAddress(dt);
         }
 
-        public DataTable REST_UpdateAddress(string AgreementNo, string UserLineID, string AddressCode, string isMaillingAddress, string AddressNo, string Moo, string Soi, string RoomNo, string Floor, string Building, string Street, string District, string SubDistrict, string City, string PostCode)//, bool isConsent)
+        public DataTable REST_UpdateAddress(string AgreementNo, string UserLineID, string AddressCode, string isMaillingAddress, string AddressNo, string Moo, string Soi, string RoomNo, string Floor, string Building, string Street, string District, string SubDistrict, string City, string PostCode, bool isConsent)
         {
             statement = new Statement();
             DataTable dt = new DataTable();
-            statement.AppendStatement("EXEC REST_UpdateAddress @AgreementNo, @UserLineID, @AddressCode, @isMaillingAddress, @AddressNo, @Moo, @Soi, @RoomNo, @Floor, @Building, @Street, @District, @SubDistrict, @City, @PostCode");//, @isConsent");
+            statement.AppendStatement("EXEC REST_UpdateAddress @AgreementNo, @UserLineID, @AddressCode, @isMaillingAddress, @AddressNo, @Moo, @Soi, @RoomNo, @Floor, @Building, @Street, @District, @SubDistrict, @City, @PostCode, @isConsent");
             statement.AppendParameter("@AgreementNo", AgreementNo);
             statement.AppendParameter("@UserLineID", UserLineID);
             statement.AppendParameter("@AddressCode", AddressCode);
@@ -154,18 +156,20 @@ namespace APICore.Models.DataClass
             statement.AppendParameter("@SubDistrict", SubDistrict);
             statement.AppendParameter("@City", City);
             statement.AppendParameter("@PostCode", PostCode);
-            // statement.AppendParameter("@isConsent", isConsent);
+            statement.AppendParameter("@isConsent", isConsent);
             
             dt = resAccess.ExecuteDataTable(statement);
 
             return dt;
         }
 
-        public DataTable REST_UpdateAddressNotRegister(string IDcard, string BirthDay, string NextCard, string AddressCode, string isMaillingAddress, string AddressNo, string Moo, string Soi, string RoomNo, string Floor, string Building, string Street, string District, string SubDistrict, string City, string PostCode, string TrackingID, string ApprovalName)//, bool isConsent)
+        // public DataTable REST_UpdateAddressNotRegister(string IDcard, string BirthDay, string NextCard, string AddressCode, string isMaillingAddress, string AddressNo, string Moo, string Soi, string RoomNo, string Floor, string Building, string Street, string District, string SubDistrict, string City, string PostCode, string TrackingID, string ApprovalName, bool isConsent)
+        public DataTable REST_UpdateAddressNotRegister(string IDcard, string BirthDay, string NextCard, string AddressCode, string isMaillingAddress, string AddressNo, string Moo, string Soi, string RoomNo, string Floor, string Building, string Street, string District, string SubDistrict, string City, string PostCode, bool isConsent)
         {
             statement = new Statement();
             DataTable dt = new DataTable();
-            statement.AppendStatement("EXEC REST_UpdateAddressNotRegister @IDcard, @BirthDay, @NextCard, @AddressCode, @isMaillingAddress, @AddressNo, @Moo, @Soi, @RoomNo, @Floor, @Building, @Street, @District, @SubDistrict, @City, @PostCode, @TrackingID, @ApprovalName");//, @isConsent");
+            // statement.AppendStatement("EXEC REST_UpdateAddressNotRegister @IDcard, @BirthDay, @NextCard, @AddressCode, @isMaillingAddress, @AddressNo, @Moo, @Soi, @RoomNo, @Floor, @Building, @Street, @District, @SubDistrict, @City, @PostCode, @TrackingID, @ApprovalName, @isConsent");
+            statement.AppendStatement("EXEC REST_UpdateAddressNotRegister @IDcard, @BirthDay, @NextCard, @AddressCode, @isMaillingAddress, @AddressNo, @Moo, @Soi, @RoomNo, @Floor, @Building, @Street, @District, @SubDistrict, @City, @PostCode, @isConsent");
             statement.AppendParameter("@IDcard", IDcard);
             statement.AppendParameter("@BirthDay", BirthDay);
             statement.AppendParameter("@NextCard", NextCard);
@@ -182,9 +186,9 @@ namespace APICore.Models.DataClass
             statement.AppendParameter("@SubDistrict", SubDistrict);
             statement.AppendParameter("@City", City);
             statement.AppendParameter("@PostCode", PostCode);
-            statement.AppendParameter("@TrackingID", TrackingID);
-            statement.AppendParameter("@ApprovalName", ApprovalName);
-            // statement.AppendParameter("@isConsent", isConsent);
+            // statement.AppendParameter("@TrackingID", TrackingID);
+            // statement.AppendParameter("@ApprovalName", ApprovalName);
+            statement.AppendParameter("@isConsent", isConsent);
             
             dt = resAccess.ExecuteDataTable(statement);
 

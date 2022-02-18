@@ -46,15 +46,26 @@ namespace APICore.Controllers
             string strmessage = "";
             dt = new DataTable();
             dt = DAC.REST_UpdateStatusApp(UserLineId, AppNo);
-
-            if(dt.Rows.Count > 0)
+            try
             {
-                strmessage = template.AcceptTaskMessage();
-                strmessage = string.Format(strmessage, dt.Rows[0]["User_Name"].ToString(), dt.Rows[0]["Application_No"].ToString(), dt.Rows[0]["Application_DealerName"].ToString(), dt.Rows[0]["User_PhoneNumber"].ToString());
-                message = api.SetMessage(strmessage);
-                response.to = dt.Rows[0]["Application_CreateBy"].ToString();
-                response.messages.Add(message);
-                await api.CallApi(response);
+                if(dt.Rows.Count > 0)
+                {
+                    strmessage = template.AcceptTaskMessage();
+                    strmessage = string.Format(strmessage, dt.Rows[0]["User_Name"].ToString(), dt.Rows[0]["Application_No"].ToString(), dt.Rows[0]["Application_DealerName"].ToString(), dt.Rows[0]["User_PhoneNumber"].ToString());
+                    message = api.SetMessage(strmessage);
+                    response.to = dt.Rows[0]["Application_CreateBy"].ToString();
+                    response.messages.Add(message);
+                    await api.CallApi(response);
+                    DAC.REST_KeepEventTransaction("AcceptTask", response.to, "CheckerController -> AcceptTask", "[59]");
+                }
+                else
+                {
+                    DAC.REST_KeepEventTransaction("AcceptTask", AppNo, "CheckerController -> AcceptTask is Empty", "REST_UpdateStatusApp " + UserLineId + ", " + AppNo);
+                }
+            }
+            catch(Exception e)
+            {
+                DAC.REST_KeepEventTransaction("AcceptTask", AppNo, "CheckerController -> AcceptTask", e.StackTrace);
             }
         }
     }

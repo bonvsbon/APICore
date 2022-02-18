@@ -110,12 +110,13 @@ namespace APICore.Controllers
     [Authorize]
     public async Task<IActionResult> UpdatePhoneNumber(MobileInformation request)
     {
-        // if(request.isConsent != true)
-        // {
-        //     dc.Add("refCode", "");
-        //     dc.Add("result", "กรุณายืนยันความถูกต้องของข้อมูล");
-        //     return BadRequest(dc);
-        // }
+        if(request.isConsent != true)
+        {
+            dc = new Dictionary<string, string>();
+            dc.Add("refCode", "");
+            dc.Add("result", "กรุณายืนยันความถูกต้องของข้อมูล");
+            return BadRequest(dc);
+        }
         string msg = "";
         result = new ResultUpdate();
         acc.REST_KeepLogRequest("request", func.JsonSerialize(request));
@@ -126,7 +127,7 @@ namespace APICore.Controllers
             acc.REST_KeepLogRequest("Data is Empty", func.JsonSerialize(request));
             return NotFound(result);
         }
-        msg = management.REST_UpdateMobileNumber(request.NewPhoneNumber, request.LineUserID);//, request.isConsent);
+        msg = management.REST_UpdateMobileNumber(request.NewPhoneNumber, request.LineUserID, request.isConsent);
         result.phoneNumber = request.NewPhoneNumber;
         result.result = msg;
         return Ok(result);
@@ -153,12 +154,13 @@ namespace APICore.Controllers
     [Authorize]
     public async Task<IActionResult> UpdateAddress(InformationAddress request)
     {
-        // if(request.isConsent != true)
-        // {
-        //     dc.Add("refCode", "");
-        //     dc.Add("result", "กรุณายืนยันความถูกต้องของข้อมูล");
-        //     return BadRequest(dc);
-        // }
+        if(request.isConsent != true)
+        {
+            dc = new Dictionary<string, string>();
+            dc.Add("refCode", "");
+            dc.Add("result", "กรุณายืนยันความถูกต้องของข้อมูล");
+            return BadRequest(dc);
+        }
         
         dt = new DataTable();
         dc = new Dictionary<string, string>();
@@ -186,8 +188,8 @@ namespace APICore.Controllers
             request.SubDistrict,
             request.City,
             request.PostCode
-            // ,
-            // request.isConsent
+            ,
+            request.isConsent
         );
 
         if(dt.Rows.Count > 0)
@@ -273,12 +275,13 @@ namespace APICore.Controllers
     [Authorize]
     public async Task<IActionResult> UpdatePhoneNumberNoRegister(CustomerWithoutBind request)
     {
-        // if(request.isConsent != true)
-        // {
-        //     dc.Add("refCode", "");
-        //     dc.Add("result", "กรุณายืนยันความถูกต้องของข้อมูล");
-        //     return BadRequest(dc);
-        // }
+        if(request.isConsent != true)
+        {
+            dc = new Dictionary<string, string>();
+            dc.Add("refCode", "");
+            dc.Add("result", "กรุณายืนยันความถูกต้องของข้อมูล");
+            return BadRequest(dc);
+        }
         string msg = "";
         result = new ResultUpdate();
         acc.REST_KeepLogRequest("request", func.JsonSerialize(request));
@@ -289,7 +292,8 @@ namespace APICore.Controllers
             acc.REST_KeepLogRequest("Data is Empty", func.JsonSerialize(request));
             return NotFound(result);
         }
-        msg = management.REST_UpdateMobileNotRegister(request.IDCard, request.BirthDay, request.PhoneNumber, request.TrackingID, request.ApprovalName);//, request.isConsent);
+        // msg = management.REST_UpdateMobileNotRegister(request.IDCard, request.BirthDay, request.PhoneNumber, request.TicketID, request.ApproveBy, request.isConsent);
+        msg = management.REST_UpdateMobileNotRegister(request.IDCard, request.BirthDay, request.PhoneNumber, request.isConsent);
         result.phoneNumber = request.PhoneNumber;
         result.result = msg;
         return Ok(result);
@@ -321,14 +325,16 @@ namespace APICore.Controllers
     [Authorize]
     public async Task<IActionResult> UpdateAddressNoRegister(InformationAddressWithoutBind request)
     {
-        // if(request.isConsent != true)
-        // {
-        //     dc.Add("refCode", "");
-        //     dc.Add("result", "กรุณายืนยันความถูกต้องของข้อมูล");
-        //     return BadRequest(dc);
-        // }
+        if(request.isConsent != true)
+        {
+            dc = new Dictionary<string, string>();
+            dc.Add("refCode", "");
+            dc.Add("result", "กรุณายืนยันความถูกต้องของข้อมูล");
+            return BadRequest(dc);
+        }
         dt = new DataTable();
         dc = new Dictionary<string, string>();
+        acc.REST_KeepLogRequest("request", func.JsonSerialize(request));
         List<InformationAddressNoRegister> address = new List<InformationAddressNoRegister>();
         if (string.IsNullOrEmpty(request.IDCard) || string.IsNullOrEmpty(request.BirthDay) || string.IsNullOrEmpty(request.NextCard))
         {
@@ -354,10 +360,10 @@ namespace APICore.Controllers
             request.SubDistrict,
             request.City,
             request.PostCode,
-            request.TrackingID,
-            request.ApprovalName
+            // request.TicketID,
+            // request.ApproveBy
             // ,
-            // request.isConsent
+            request.isConsent
         );
 
         if(dt.Rows.Count > 0)

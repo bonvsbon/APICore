@@ -25,6 +25,15 @@ namespace APICore.Models
         
     }
 
+    public class EventLogModel
+    {
+        public string Event_Request { get; set; }
+        public string Event_FunctionName { get; set; }
+        public string Event_Result { get; set; }
+        public string Event_ListLineUserId { get; set; }              
+        
+    }
+
     public class ExternalNotice
     {
         public string CheckerName { get; set; }
@@ -108,7 +117,6 @@ namespace APICore.Models
 
             resAccess.ExecuteDataTable(statement);
         }
-
     }
 
 }
