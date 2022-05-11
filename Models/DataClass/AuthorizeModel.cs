@@ -26,27 +26,28 @@ namespace APICore.Models {
             string DomainAndUsername = "";
             string strCommu;
             bool flgLogin = false;
-            strCommu = ("LDAP://" +
-                (config.Ldap.server));
+            // strCommu = ("LDAP://" +
+            //     (config.Ldap.server));
+            strCommu = config.Ldap.server;//"LDAP://DC=BAF,DC=CO,DC=LOCAL";
             DomainAndUsername = (config.Ldap.shortDomainName + ("\\" + username));
-            DirectoryEntry entry = new DirectoryEntry (strCommu, DomainAndUsername, password);
+            DirectoryEntry entry = new DirectoryEntry(strCommu, DomainAndUsername, password);
             object obj;
-            // SearchResultCollection result;
+            //SearchResultCollection res;
             SearchResult res;
             if (entry.Properties.Values.Count == 0) {
                 flgLogin = false;
                 return "username of password incorrect";
             }
             obj = entry.NativeObject;
-            DirectorySearcher search = new DirectorySearcher (entry);
-            UserInformationModel response = new UserInformationModel ();
+            DirectorySearcher search = new DirectorySearcher(entry);
+            UserInformationModel response = new UserInformationModel();
 
             try {
                 search.Filter = ("(SAMAccountName=" +
                     (username + ")"));
-                search.PropertiesToLoad.Add ("cn");
-                search.PropertiesToLoad.Add ("employeeID");
-                res = search.FindOne ();
+                search.PropertiesToLoad.Add("cn");
+                search.PropertiesToLoad.Add("employeeID");
+                res = search.FindOne();
                 if ((res == null)) {
                     flgLogin = false;
                     return "Please check user / password";
@@ -55,12 +56,12 @@ namespace APICore.Models {
                 }
             } catch (Exception ex) {
                 flgLogin = false;
-                return ex.Message.ToString () + "Please check user / password";
+                return ex.Message.ToString() + "Please check user / password";
             }
             if ((flgLogin == true)) {
                 StringBuilder sb = new StringBuilder ();
-                res = search.FindOne ();
-                DirectoryEntry de = res.GetDirectoryEntry ();
+                res = search.FindOne();
+                DirectoryEntry de = res.GetDirectoryEntry();
 
                 /*
                  * cn => CustomerName
@@ -69,7 +70,7 @@ namespace APICore.Models {
                  * EmployeeID
                  */
 
-                response.EmployeeCode = de.Properties["employeeID"].Value != null ? de.Properties["employeeID"].Value.ToString () : "";
+                response.EmployeeCode = de.Properties["employeeID"].Value != null ? de.Properties["employeeID"].Value.ToString() : "";
                 response.EmployeeName = username;
                 response.Token = TokenGenerator.GenerateToken(username);
                 response.Username = username;

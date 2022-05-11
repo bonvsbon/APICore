@@ -361,6 +361,7 @@ namespace APICore.Controllers
         {
             dupBubbleMulticast bubble = new dupBubbleMulticast();
             dupBubbleMulticastNoFooter nofooter = new dupBubbleMulticastNoFooter();
+            string DealerCode = "";
             DAC.REST_KeepEventTransaction("PushMessage", func.JsonSerialize(request), "Push", "[364]");
             string strmessage = template.MessageAlertTaskList();
             // Get Data for string format
@@ -379,8 +380,10 @@ namespace APICore.Controllers
                     dt.Rows[0]["Application_PhoneNumber"].ToString(),
                     dt.Rows[0]["Application_DealerCode"].ToString(),
                     dt.Rows[0]["Dealer_BranchCode"].ToString(),
-                    dt.Rows[0]["PhoneNumber"].ToString()
+                    dt.Rows[0]["PhoneNumber"].ToString(),
+                    dt.Rows[0]["DealerPhoneNumber"].ToString()
                 );
+                DealerCode = dt.Rows[0]["Application_DealerCode"].ToString();
                 dt = new DataTable();
                 dt = DAC.REST_GetCheckerList(request.AppNo);
                 for(int i = 0; i < dt.Rows.Count; i++)
@@ -391,7 +394,19 @@ namespace APICore.Controllers
                     {
                         try
                         {
-                            nofooter = api.SetBubbleMessageMultiCastNoFooter(strmessage, request.AppNo);
+                            if(DealerCode == "99999")
+                            {
+                                nofooter = api.SetBubbleMessageMultiCastNoFooter(
+                                    strmessage, 
+                                    request.AppNo,
+                                    bodybackgroundColor:"#ff0000",
+                                    defaultImage:"https://www.nextcapital.co.th/uploads/06F1/files/70e52a4df09e37a52641a68de420ee01.png"
+                                    );
+                            }
+                            else
+                            {
+                                nofooter = api.SetBubbleMessageMultiCastNoFooter(strmessage, request.AppNo);
+                            }
                             nofooter.to.Add(dt.Rows[i]["User_LineUserId"].ToString());
                             await api.CallApiMultiCast(nofooter);
                             DAC.REST_KeepEventTransaction("PushMessage : NoFooter", func.JsonSerialize(nofooter.to), "Push", "[395]");
@@ -405,7 +420,21 @@ namespace APICore.Controllers
                     {
                         try
                         {
-                            bubble = api.SetBubbleMessageMultiCast(strmessage, request.AppNo);
+                            if(DealerCode == "99999")
+                            {
+                                bubble = api.SetBubbleMessageMultiCast(
+                                    strmessage, 
+                                    request.AppNo,
+                                    bodybackgroundColor:"#ff0000",
+                                    defaultImage:"https://www.nextcapital.co.th/uploads/06F1/files/70e52a4df09e37a52641a68de420ee01.png",
+                                    footerTextColor:"#FFFFFFFF",
+                                    footerBackgroundColor:"#ff0000"
+                                    );
+                            }
+                            else
+                            {
+                                bubble = api.SetBubbleMessageMultiCast(strmessage, request.AppNo);
+                            }
                             bubble.to.Add(dt.Rows[i]["User_LineUserId"].ToString());
                             await api.CallApiMultiCast(bubble);
                             DAC.REST_KeepEventTransaction("PushMessage : haveFooter", func.JsonSerialize(bubble.to), "Push", "[409]");
@@ -672,6 +701,49 @@ namespace APICore.Controllers
                 }
             }
 
+            return Ok();
+        }
+
+        [HttpGet("/api/dealer/GetFunction/{param1}/{param2}/{param3}")]
+        public async Task<IActionResult> GetFunction(string param1, string param2, string param3)
+        {
+            PushLineResponseMultiCastModel response = new PushLineResponseMultiCastModel();
+            MessageResponseModel message = new MessageResponseModel();
+            LineMessageTemplate template = new LineMessageTemplate();
+            string msg = template.eAppMessage();
+            msg = string.Format(msg, param1, param2, param3);
+
+            message.type = "text";
+            message.text = msg;
+
+            response.messages.Add(message);
+
+            return Ok(string.Format("Parameter 1 : {0} | Parameter 2 : {1} | Parameter 3 : {2}", param1, param2, param3));
+        }
+                
+        [HttpGet("/api/dealer/PushNotification/{docno}/{reason}/{remark}/{lineuserid}")]
+        public async Task<IActionResult> PushNotification(string docno, string reason, string remark, string lineuserid)
+        {
+            DAC.REST_KeepEventTransaction("Request", docno + "_" + reason + "_" + remark + "_" + lineuserid, "", "[698]");
+
+            PushLineResponseMultiCastModel response = new PushLineResponseMultiCastModel();
+            MessageResponseModel message = new MessageResponseModel();
+            LineMessageTemplate template = new LineMessageTemplate();
+            string msg = template.eAppMessage();
+            msg = string.Format(msg, docno, reason, remark);
+            message.type = "text";
+            message.text = msg;
+
+            try
+            {
+                response.messages.Add(message);
+                response.to.Add(lineuserid);
+                await api.CallApiMultiCast(response);
+                DAC.REST_KeepEventTransaction("PushNotification", func.JsonSerialize(response.to), "DealerController -> CallApiMultiCast", "[713]");
+            }
+            catch (Exception e) {
+                DAC.REST_KeepEventTransaction("PushNotification", func.JsonSerialize(response.to), e.StackTrace, "[719]");
+            }
             return Ok();
         }
     }

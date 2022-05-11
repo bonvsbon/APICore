@@ -45,6 +45,19 @@ namespace APICore.Models
         public string ContactPerson { get; set; }        
     }
 
+    public class EAppModel
+    {
+        public string DocNo { get; set; }
+        public string Reason { get; set; }
+        public string Remark { get; set; }
+        public List<UserModel> users { get; set; }
+    }
+
+    public class UserModel
+    {
+        public string UserLineId { get; set; }
+    }
+
     public class EventsModel
     {
         public string type { get; set; }

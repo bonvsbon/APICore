@@ -32,6 +32,7 @@ namespace APICore
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 //.AddJsonFile(path: info.FullName, optional: true, reloadOnChange: true);
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
@@ -59,10 +60,11 @@ namespace APICore
 
             app.UseHttpsRedirection();
 
-            app.UseSwagger();
+            // app.UseSwagger();
+            app.UseSwagger(e => e.SerializeAsV2 = true);
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("v1/swagger.json", "MyAPI V1");
+                c.SwaggerEndpoint("v2/swagger.json", "MyAPI V1");
             });
             app.UseRouting();
 

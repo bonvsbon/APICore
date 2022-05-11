@@ -51,8 +51,8 @@ namespace APICore.Common
         {
             func = new Functional();
             richMenu = new LineMessageTemplate.RichMenuResponse();
-            ChannelAccessToken = "q281ubFyT1L3Z1gAyrcLdLY4mHv2hXJFqAb/MEUO2OncgbgXdSsR6BDCXsrTZh0I3haZwDDaz1lrKF694gC0fTnp/CnbLma8WkiHW3UXwSf6gHxU5lNJP/IYeb1+KQRFeun9E5jJT8qx9lpQpY1S9AdB04t89/1O/w1cDnyilFU=";
-            // ChannelAccessToken = "Pq+kySWPUtbt1YvcDtMHXkbUIrN7CDqzx18DAPS4Ij153mb+1id7NNKp7m3c74Fg5h54zPR1kFraEGm8JC31540oCiUPSwgK3SiKsYd9+nftcztMkFRg2u0PXGReejmHfKccPvNmTSwEIB63yyOvFAdB04t89/1O/w1cDnyilFU=";
+            // ChannelAccessToken = "q281ubFyT1L3Z1gAyrcLdLY4mHv2hXJFqAb/MEUO2OncgbgXdSsR6BDCXsrTZh0I3haZwDDaz1lrKF694gC0fTnp/CnbLma8WkiHW3UXwSf6gHxU5lNJP/IYeb1+KQRFeun9E5jJT8qx9lpQpY1S9AdB04t89/1O/w1cDnyilFU=";
+            ChannelAccessToken = "Pq+kySWPUtbt1YvcDtMHXkbUIrN7CDqzx18DAPS4Ij153mb+1id7NNKp7m3c74Fg5h54zPR1kFraEGm8JC31540oCiUPSwgK3SiKsYd9+nftcztMkFRg2u0PXGReejmHfKccPvNmTSwEIB63yyOvFAdB04t89/1O/w1cDnyilFU=";
             AccessTokenForSupport = "4bw1smnE8oLXGQg09XJRhq9H4xHh9w1207hwUxq5q1l";
             clsPushMultiCast = new PushLineResponseMultiCastModel();
             clsdupBubbleMultiCast = new dupBubbleMulticast();
@@ -149,6 +149,7 @@ namespace APICore.Common
             clsPushMultiCast = new PushLineResponseMultiCastModel();
             clsdupBubbleMultiCast = new dupBubbleMulticast();
             clsdupBubbleMultiCastNoFooter = new dupBubbleMulticastNoFooter();
+            EAppModel clsEAppModel = new EAppModel();
             StringContent content = new StringContent(func.JsonSerialize(data),
             System.Text.Encoding.UTF8, 
             "application/json");
@@ -175,9 +176,16 @@ namespace APICore.Common
                 else if (data.GetType() == Type.GetType("APICore.Models.PushLineResponseMultiCastModel"))
                 {
                     clsPushMultiCast = (PushLineResponseMultiCastModel)data;
-                    Sqlstr = "EXEC REST_KeepEventTransaction 'API : multicast[173]', 'CallApiMultiCast', '"+ func.JsonSerialize(clsPushMultiCast.to) +"', '"+ contents +"' ";
+                    Sqlstr = "EXEC REST_KeepEventTransaction 'API : multicast[179]', 'CallApiMultiCast', '"+ func.JsonSerialize(clsPushMultiCast.to) +"', '"+ contents +"' ";
                     // Sqlstr = string.Format(Sqlstr, "API : multicast[173]", "CallApiMultiCast", func.JsonSerialize(clsPushMultiCast.to), contents);
                 }
+                else if (data.GetType() == Type.GetType("APICore.Models.EAppModel"))
+                {
+                    clsEAppModel = (EAppModel)data;
+                    Sqlstr = "EXEC REST_KeepEventTransaction 'API : multicast[185]', 'CallApiMultiCast', '"+ func.JsonSerialize(clsPushMultiCast.to) +"', '"+ contents +"' ";
+                    // Sqlstr = string.Format(Sqlstr, "API : multicast[173]", "CallApiMultiCast", func.JsonSerialize(clsPushMultiCast.to), contents);
+                }
+
             }
             catch (Exception e)
             {
@@ -348,7 +356,16 @@ namespace APICore.Common
 
         return main;
     }
-    public dupBubbleMulticast SetBubbleMessageMultiCast(string strMessage, string appNo, string headerDefault = "แจ้งเตือนงานใหม่!", string textcolor = "#FFFFFFFF")
+    public dupBubbleMulticast SetBubbleMessageMultiCast(
+        string strMessage, 
+        string appNo, 
+        string headerDefault = "แจ้งเตือนงานใหม่!", 
+        string textcolor = "#FFFFFFFF",
+        string bodybackgroundColor = "#20409A",
+        string defaultImage = "https://www.nextcapital.co.th/uploads/06F1/files/b0b78757ee3181d6ce333da2a31128ec.png",
+        string footerTextColor = "#20409A",
+        string footerBackgroundColor = "#FDB813"
+        )
     {
         dupBubbleMulticast main = new dupBubbleMulticast();
         dupBubbleSubMain subMain = new dupBubbleSubMain();
@@ -368,7 +385,7 @@ namespace APICore.Common
         header.type = "box";
         header.layout = "horizontal";
         header.position = "relative";
-        header.backgroundColor = "#20409A";
+        header.backgroundColor = bodybackgroundColor;//"#20409A";
         headerContents.type = "text";
         headerContents.text = headerDefault;
         headerContents.weight = "bold";
@@ -379,7 +396,7 @@ namespace APICore.Common
         header.contents.Add(headerContents);
 
         hero.type = "image";
-        hero.url = "https://www.nextcapital.co.th/uploads/06F1/files/b0b78757ee3181d6ce333da2a31128ec.png";
+        hero.url = defaultImage;//"https://www.nextcapital.co.th/uploads/06F1/files/b0b78757ee3181d6ce333da2a31128ec.png";
         hero.size = "full";
         hero.aspectRatio = "16:8";
         hero.aspectMode = "cover";
@@ -400,12 +417,12 @@ namespace APICore.Common
 
         footer.type = "box";
         footer.layout = "horizontal";
-        footer.backgroundColor = "#FDB813";
+        footer.backgroundColor = footerBackgroundColor;//"#FDB813";
         footerContents.type = "button";
         footerContents.action.type = "message";
         footerContents.action.label = ">>> รับงานนี้ <<<";
         footerContents.action.text = appNo;
-        footerContents.color = "#20409A";
+        footerContents.color = footerTextColor;//"#20409A";
         //footerContents.color = "#FDB813";
         footerContents.style = "link";
 
@@ -420,7 +437,14 @@ namespace APICore.Common
 
         return main;
     }
-    public dupBubbleMulticastNoFooter SetBubbleMessageMultiCastNoFooter(string strMessage, string appNo, string headerDefault = "แจ้งเตือนงานใหม่!", string textcolor = "#FFFFFFFF")
+    public dupBubbleMulticastNoFooter SetBubbleMessageMultiCastNoFooter(
+        string strMessage, 
+        string appNo, 
+        string headerDefault = "แจ้งเตือนงานใหม่!", 
+        string textcolor = "#FFFFFFFF",
+        string bodybackgroundColor = "#20409A",
+        string defaultImage = "https://www.nextcapital.co.th/uploads/06F1/files/b0b78757ee3181d6ce333da2a31128ec.png"
+    )
     {
         dupBubbleMulticastNoFooter main = new dupBubbleMulticastNoFooter();
         dupBubbleSubMain subMain = new dupBubbleSubMain();
@@ -439,7 +463,7 @@ namespace APICore.Common
         header.type = "box";
         header.layout = "horizontal";
         header.position = "relative";
-        header.backgroundColor = "#20409A";
+        header.backgroundColor = bodybackgroundColor; //"#20409A"; 2022-04-09 ปรับสีตรงนี้
         headerContents.type = "text";
         headerContents.text = headerDefault;
         headerContents.weight = "bold";
@@ -450,7 +474,7 @@ namespace APICore.Common
         header.contents.Add(headerContents);
 
         hero.type = "image";
-        hero.url = "https://www.nextcapital.co.th/uploads/06F1/files/b0b78757ee3181d6ce333da2a31128ec.png";
+        hero.url = defaultImage;//"https://www.nextcapital.co.th/uploads/06F1/files/b0b78757ee3181d6ce333da2a31128ec.png"; 2022-04-09 ปรับสีตรงนี้
         hero.size = "full";
         hero.aspectRatio = "16:8";
         hero.aspectMode = "cover";

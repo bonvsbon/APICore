@@ -23,6 +23,7 @@ namespace APICore.Models {
             public string isProd { get; set; }
             public string prod { get; set; }
             public string dev { get; set; }
+            public string EApp { get; set; }
         }
 
         public class Storages {

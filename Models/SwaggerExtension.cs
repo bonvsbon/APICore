@@ -12,9 +12,9 @@ namespace APICore.Models
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                c.SwaggerDoc("v2", new OpenApiInfo
                 {
-                    Version = "v1",
+                    Version = "v2",
                     Title = "WEB API",
                     Description = "A simple example ASP.NET Core Web API",
                     TermsOfService = new Uri("https://example.com/"),

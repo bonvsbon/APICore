@@ -154,18 +154,31 @@ namespace APICore.dbContext
                 dt = new DataTable();
                 _func = new Functional();
             }
-            public DataTable ExecuteDataTable(Statement sql)
+            public DataTable ExecuteDataTable(Statement sql, string key = "Default")
             {
                 try
                 {
-                    dt = new DataTable();
-                    _command = new SqlCommand(sql.GetStatement(), _dal._SqlDb);
-                    _dal._SqlDb.Open();
-                    AddParameter(sql);
-                    _adapter = new SqlDataAdapter(_command);
-                    _adapter.Fill(dt);
-                    _dal._SqlDb.Close();
-                    KeepLogDataBase("", sql.GetStatement());
+                     dt = new DataTable();
+                    if(key != "Default")
+                    {
+                        _dal._SqlDb = new SqlConnection(AESEncrypt.AESOperation.DecryptString(key));
+                        _dal._SqlDb.Open();
+                        _command = new SqlCommand(sql.GetStatement(), _dal._SqlDb);
+                        AddParameter(sql);
+                        _adapter = new SqlDataAdapter(_command);
+                        _adapter.Fill(dt);
+                        _dal._SqlDb.Close();
+                    }
+                    else
+                    {
+                        _command = new SqlCommand(sql.GetStatement(), _dal._SqlDb);
+                        _dal._SqlDb.Open();
+                        AddParameter(sql);
+                        _adapter = new SqlDataAdapter(_command);
+                        _adapter.Fill(dt);
+                        _dal._SqlDb.Close();
+                        KeepLogDataBase("", sql.GetStatement());
+                    }
                 }
                 catch (Exception e)
                 {
@@ -202,26 +215,38 @@ namespace APICore.dbContext
                 
             }
 
-            public string ExecutenonResult(Statement sql)
+            public string ExecutenonResult(Statement sql, string key = "Default")
             {
                 string result = "";
-                ResponseModel resultSet = new ResponseModel();
-                try
+                if(key != "Default")
                 {
+                    _dal._SqlDb = new SqlConnection(AESEncrypt.AESOperation.DecryptString(key));
                     _dal._SqlDb.Open();
                     _command = new SqlCommand(sql.GetStatement(), _dal._SqlDb);
                     AddParameter(sql);
                     _command.ExecuteNonQuery();
                     _dal._SqlDb.Close();
                 }
-                catch (Exception e)
+                else
                 {
-                    _dal._SqlDb.Close();
-                    return e.Message;
-                }
-                finally
-                {
-                    result = StatusHttp.OK.ToString();
+                    ResponseModel resultSet = new ResponseModel();
+                    try
+                    {
+                        _dal._SqlDb.Open();
+                        _command = new SqlCommand(sql.GetStatement(), _dal._SqlDb);
+                        AddParameter(sql);
+                        _command.ExecuteNonQuery();
+                        _dal._SqlDb.Close();
+                    }
+                    catch (Exception e)
+                    {
+                        _dal._SqlDb.Close();
+                        return e.Message;
+                    }
+                    finally
+                    {
+                        result = StatusHttp.OK.ToString();
+                    }
                 }
 
                 return result;
