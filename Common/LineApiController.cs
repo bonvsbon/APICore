@@ -51,8 +51,8 @@ namespace APICore.Common
         {
             func = new Functional();
             richMenu = new LineMessageTemplate.RichMenuResponse();
-            // ChannelAccessToken = "q281ubFyT1L3Z1gAyrcLdLY4mHv2hXJFqAb/MEUO2OncgbgXdSsR6BDCXsrTZh0I3haZwDDaz1lrKF694gC0fTnp/CnbLma8WkiHW3UXwSf6gHxU5lNJP/IYeb1+KQRFeun9E5jJT8qx9lpQpY1S9AdB04t89/1O/w1cDnyilFU=";
-            ChannelAccessToken = "Pq+kySWPUtbt1YvcDtMHXkbUIrN7CDqzx18DAPS4Ij153mb+1id7NNKp7m3c74Fg5h54zPR1kFraEGm8JC31540oCiUPSwgK3SiKsYd9+nftcztMkFRg2u0PXGReejmHfKccPvNmTSwEIB63yyOvFAdB04t89/1O/w1cDnyilFU=";
+            ChannelAccessToken = "q281ubFyT1L3Z1gAyrcLdLY4mHv2hXJFqAb/MEUO2OncgbgXdSsR6BDCXsrTZh0I3haZwDDaz1lrKF694gC0fTnp/CnbLma8WkiHW3UXwSf6gHxU5lNJP/IYeb1+KQRFeun9E5jJT8qx9lpQpY1S9AdB04t89/1O/w1cDnyilFU=";
+            // ChannelAccessToken = "Pq+kySWPUtbt1YvcDtMHXkbUIrN7CDqzx18DAPS4Ij153mb+1id7NNKp7m3c74Fg5h54zPR1kFraEGm8JC31540oCiUPSwgK3SiKsYd9+nftcztMkFRg2u0PXGReejmHfKccPvNmTSwEIB63yyOvFAdB04t89/1O/w1cDnyilFU=";
             AccessTokenForSupport = "4bw1smnE8oLXGQg09XJRhq9H4xHh9w1207hwUxq5q1l";
             clsPushMultiCast = new PushLineResponseMultiCastModel();
             clsdupBubbleMultiCast = new dupBubbleMulticast();
